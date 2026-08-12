@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS의 감정일기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poor+Story&display=swap" rel="stylesheet">
+    <style>
+        html {
+            font-size: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            outline: none;
+            font-family: "Poor Story", system-ui;
+        }
+
+        body {
+            width: 100%;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top {
+            width: 100%;
+            display: flex;
+            gap: 24px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /*top 안에 있는 해더, 메인 영역은 칼럼으로 쌓도록*/
+
+        }
+
+        /* 해더 부분의 높이, 가로배치, 양쪽 정렬 등을 설정 */
+        .header {
+            width: 1920px;
+            height: 60px;
+            padding-left: 20px;
+            padding-right: 20px;
+            max-width: 1168px;
+            min-width: 320px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+        }
+
+        .diarytitle {
+            
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .다이어리제목 {
+            font-weight: 700;
+            font-size: 30px;
+            line-height: 16px;
+            letter-spacing: -0.01em;
+            /* -1% × 18px(font-size) = -0.18px ≈ -0.01em */
+            color: #494949;
+        }
+
+        .darkmode {
+            /* width: 121px;
+                    height: 32px; */
+            display: flex;
+            gap: 8px;
+            flex-direction: row;
+            align-items: center;
+            font-size: 30px;
+        }
+
+        /* appearance: none → 체크박스의 원래 네모 모양을 없애고 완전히 새로 그림 */
+        .darkModeToggle {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 58px;
+            height: 32px;
+            border-radius: 100px;
+            background-color: #E4E4E4;
+            border: none;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        /* 가상요소(::after) → 스위치 안의 동그란 손잡이를 만들어줌 */
+        .darkModeToggle::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: #FFFFFF;
+            transition: left 0.2s;
+        }
+
+        /* :checked → 체크(켜짐) 상태일 때의 모양 */
+        .darkModeToggle:checked {
+            background-color: #000000;
+        }
+
+        .darkModeToggle:checked::after {
+            left: 29px;
+        }
+
+        /* 배너 부분의 모서리 둥그런 정도, 배경색 등을 설정 */
+        .banner {
+            width: 1168px;
+            height: 340px;
+            border-radius: 24px;
+            /* max-width: 1168px;
+                    min-width: 320px; */
+            /* background-image: none; */
+            background-color: #D9D9D9;
+            max-width: 1168px;
+            min-width: 320px;
+        }
+
+        #배너 {
+            width: 1168px;
+            height: 340px;
+            border-radius: 24px;
+        }
+
+        .main {
+            display: flex;
+            flex-direction: row;
+            gap: 42px;
+            max-width: 1168px;
+            min-width: 320px;
+        }
+
+        .maintop {
+            display: flex;
+            flex-direction: column;
+            width: 1168px;
+            gap: 32px;
+        }
+
+        .bin {
+            display: flex;
+            height: 48px;
+            gap: 16px;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .diarybin {
+            width: 119px;
+            border-bottom: 3px solid black;
+            padding: 12px 8px 12px 8px;
+            gap: 10px;
+
+            font-weight: 700;
+            font-size: 22px;
+            line-height: 22px;
+            letter-spacing: -1%;
+            /* -1% × 18px(font-size) = -0.18px ≈ -0.01em */
+            color: #000000;
+        }
+
+        .photobin {
+            width: 119px;
+            padding: 12px 8px 12px 8px;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 22px;
+            line-height: 22px;
+            color: #818181;
+        }
+
+        .search {
+            display: flex;
+            height: 48px;
+            gap: 8px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toolbar {
+            display: flex;
+            width: 1050px;
+            gap: 16px;
+        }
+
+        .filter {
+            width: 120px;
+            min-width: 120px;
+            gap: 10px;
+            opacity: 1;
+            padding: 12px 10px 12px 10px;
+            border-width: 1px;
+            font-size: 18px;
+        }
+
+        .inputbox {
+            width: 360px;
+            min-width: 320px;
+            max-width: 360px;
+            gap: 8px;
+            opacity: 1;
+            padding: 12px 16px 12px 16px;
+            border-radius: 100px;
+            border-width: 1px;
+            font-size: 16px;
+        }
+
+        .write-btn {
+            width: 110px;
+            padding: 8px 10px 8px 10px;
+            gap: 10px;
+            border-radius: 8px;
+            margin-left: auto;
+            background-color: rgb(2, 2, 2);
+            color: white;
+            font-size: 18px;
+        }
+
+        .cardlist {
+            display: grid;
+
+            justify-content: center;
+            /* width: 1168px;
+                    height: 936px; */
+
+            grid-template-columns: 274px 274px 274px 274px;
+            grid-template-rows: 296px 296px 296px;
+            background-color: #FFFFFF;
+
+            column-gap: 24px;
+            row-gap: 24px;
+
+            place-items: center center;
+            place-content: center center;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 8px 0;
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn,
+        .page-btn {
+            padding: 8px 14px;
+            border: 1px solid #DDDDDD;
+            border-radius: 8px;
+            background-color: #FFFFFF;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .page-btn.active {
+            background-color: #FEE39A;
+            color: #000000;
+            border-color: #000000;
+        }
+
+        .footer {
+            width: 100%;
+            height: 159px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            border-top-width: 1px;
+            padding-top: 24px;
+            padding-right: 20px;
+            padding-bottom: 24px;
+            padding-left: 20px;
+        }
+
+        .copyright {
+            width: 1168px;
+            height: 112px;
+            max-width: 1168px;
+            gap: 32px;
+        }
+
+        .endtitle {
+            width: 125px;
+            height: 16px;
+            font-weight: 700;
+            font-style: Bold;
+            font-size: 20px;
+            line-height: 16px;
+            letter-spacing: -1%;
+        }
+
+        .role {
+            height: 16px;
+            gap: 8px;
+        }
+
+        .endcopy {
+            height: 16px;
+            font-weight: 300;
+            font-style: Light;
+            font-size: 14px;
+            line-height: 16px;
+            letter-spacing: -1%;
+            color: var(--Gray-Gray-500, #919191);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            /* 스크롤 상관없이 화면 기준 고정 (지난번 힌트가 이거였어요!) */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            /* 다른 요소들보다 위에 뜨도록 */
+        }
+
+        .modal {
+            width: 400px;
+            background-color: #FFFFFF;
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            border: none;
+            background: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .modal-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .modal-field select,
+        .modal-field textarea {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #E4E4E4;
+            font-size: 14px;
+        }
+
+        .modal-field textarea {
+            height: 100px;
+            resize: none;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .modal-cancel {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid #E4E4E4;
+            background: #FFFFFF;
+            cursor: pointer;
+        }
+
+        .modal-submit {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            background-color: #000000;
+            color: #FFFFFF;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 274px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card-thumb {
+            position: relative;
+            width: 274px;
+            height: 208px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-emoji {
+            width: 274px;
+            height: 208px;
+        }
+
+        .card-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            border: none;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .card-date {
+            color: #4e4e4e;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-desc {
+            font-size: 18px;
+            color: #494949;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-emotion.happy {
+            color: #D4A017;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-emotion.sadness {
+            color: #23a0d6;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-emotion.angry {
+            color: #E0685C;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-emotion.proud {
+            color: #008848;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-emotion.bored {
+            color: #a718b4ce;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* ===== 필터 드롭다운 꾸미기 ===== */
+        .filter {
+            border: 1px solid #E4E4E4;
+            border-radius: 8px;
+            background-color: #FFFFFF;
+            cursor: pointer;
+        }
+
+        .inputbox {
+            border: 1px solid #E4E4E4;
+        }
+
+        /* ===== 카드 이미지 object-fit ===== */
+        .card-emoji {
+            object-fit: cover;
+        }
+
+        .card,
+        .card-thumb {
+            cursor: pointer;
+        }
+
+        /* ===== 맨 위로 가기 플로팅 버튼 ===== */
+        .scroll-top-btn {
+            position: fixed;
+            right: 2rem;
+            bottom: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background-color: #000000;
+            color: #FFFFFF;
+            font-size: 1.25rem;
+            cursor: pointer;
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ===== 탭 클릭 가능하게 ===== */
+        .diarybin,
+        .photobin {
+            cursor: pointer;
+        }
+
+        /* ===== 일기목록 / 사진목록 패널 전환 ===== */
+        .list-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .list-panel.hidden {
+            display: none;
+        }
+
+        .photo-panel {
+            display: none;
+        }
+
+        .photo-panel.active {
+            display: block;
+        }
+
+        .photo-toolbar {
+            display: flex;
+            align-items: center;
+            height: 48px;
+            margin-bottom: 16px;
+        }
+
+        .ratio-select {
+            width: 140px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #E4E4E4;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .dogGrid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .dogGrid.기본형 .dogThumb {
+            aspect-ratio: 1 / 1;
+        }
+
+        .dogGrid.가로형 .dogThumb {
+            aspect-ratio: 4 / 3;
+        }
+
+        .dogGrid.세로형 .dogThumb {
+            aspect-ratio: 3 / 4;
+        }
+
+        .dogThumb {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            background: linear-gradient(90deg, #eeeeee 25%, #f5f5f5 50%, #eeeeee 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.4s infinite;
+        }
+
+        .dogThumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .dogThumb img.loaded {
+            opacity: 1;
+        }
+
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* ===== 모달 안 다크모드 토글 ===== */
+        .modal-darktoggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+        }
+
+        .modal-darkswitch {
+            width: 40px;
+            height: 22px;
+            border-radius: 20px;
+            background-color: #E4E4E4;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .modal-darkswitch::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #FFFFFF;
+            transition: left 0.2s;
+        }
+
+        .modal-darkswitch.on {
+            background-color: #000000;
+        }
+
+        .modal-darkswitch.on::after {
+            left: 20px;
+        }
+
+        .modal.dark {
+            background-color: #222222;
+            color: #EEEEEE;
+        }
+
+        .modal.dark .modal-field select,
+        .modal.dark .modal-field textarea {
+            background-color: #333333;
+            color: #EEEEEE;
+            border-color: #555555;
+        }
+
+        /* ===== 등록완료 모달(중첩) ===== */
+        .confirm-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .confirm-box {
+            width: 320px;
+            background-color: #FFFFFF;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .confirm-box button {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            background-color: #000000;
+            color: #FFFFFF;
+            cursor: pointer;
+        }
+
+        /* ===== 일기 상세보기 모달 ===== */
+        .detail-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 150;
+        }
+
+        .detail-modal {
+            width: 480px;
+            max-height: 80vh;
+            overflow-y: auto;
+            background-color: #FFFFFF;
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-close {
+            border: none;
+            background: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .detail-actions button {
+            border: 1px solid #E4E4E4;
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 0.8125rem;
+        }
+
+        .detail-content {
+            font-size: 15px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .comment-section {
+            border-top: 1px solid #EEEEEE;
+            padding-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 160px;
+            overflow-y: auto;
+        }
+
+        .comment-item {
+            font-size: 13px;
+            background-color: #F2F2F2;
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+
+        .comment-input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .comment-input-row input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid #E4E4E4;
+            font-size: 13px;
+        }
+
+        .comment-input-row button {
+            border: none;
+            background-color: #000000;
+            color: #FFFFFF;
+            border-radius: 20px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* ===== 삭제 확인 모달 ===== */
+        .deleteconfirm-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 250;
+        }
+
+        .deleteconfirm-box {
+            width: 300px;
+            background-color: #FFFFFF;
+            border-radius: 16px;
+            padding: 28px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .deleteconfirm-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .deleteconfirm-buttons button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #E4E4E4;
+            background-color: #FFFFFF;
+            cursor: pointer;
+        }
+
+        .deleteconfirm-buttons button.danger {
+            background-color: #E0685C;
+            color: #FFFFFF;
+            border: none;
+        }
+
+        /* ===== 토스트 ===== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background-color: #000000;
+            color: #FFFFFF;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-size: 0.875rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s, transform 0.25s;
+            z-index: 300;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== 전체 다크모드 (오른쪽 상단 토글) ===== */
+        /* body에 dark-mode 클래스가 붙었을 때 페이지 전체 색을 바꿔요 */
+        body.dark-mode {
+            background-color: #121212;
+            color: #EEEEEE;
+        }
+
+        body.dark-mode h2 {
+            background-color: transparent;
+            color: #EEEEEE;
+        }
+
+        body.dark-mode .banner {
+            background-color: #2A2A2A;
+        }
+
+        body.dark-mode .diarybin {
+            color: #FFFFFF;
+            border-bottom-color: #FFFFFF;
+        }
+
+        body.dark-mode .photobin {
+            color: #888888;
+        }
+
+        body.dark-mode .search {
+            background-color: #121212;
+        }
+
+        body.dark-mode .search.scrolled {
+            background-color: #000000;
+        }
+
+        body.dark-mode .filter,
+        body.dark-mode .inputbox {
+            background-color: #2A2A2A;
+            border-color: #444444;
+            color: #EEEEEE;
+        }
+
+        body.dark-mode .write-btn {
+            background-color: #333333;
+            color: #EEEEEE;
+        }
+
+        body.dark-mode .cardlist {
+            background-color: #121212;
+        }
+
+        body.dark-mode .card-desc {
+            color: #CCCCCC;
+        }
+
+        body.dark-mode .card-date {
+            color: #999999;
+        }
+
+        body.dark-mode .footer {
+            border-top-color: #333333;
+        }
+
+        body.dark-mode .endtitle,
+        body.dark-mode .role,
+        body.dark-mode .endcopy {
+            color: #EEEEEE;
+        }
+
+        body.dark-mode .pagination-btn,
+        body.dark-mode .page-btn {
+            background-color: #2A2A2A;
+            color: #EEEEEE;
+            border-color: #444444;
+        }
+
+        body.dark-mode .page-btn.active {
+            background-color: #FFFFFF;
+            color: #121212;
+            border-color: #FFFFFF;
+        }
+
+        body.dark-mode .modal,
+        body.dark-mode .detail-modal,
+        body.dark-mode .confirm-box,
+        body.dark-mode .deleteconfirm-box {
+            background-color: #222222;
+            color: #EEEEEE;
+        }
+
+        body.dark-mode .modal-field select,
+        body.dark-mode .modal-field textarea,
+        body.dark-mode .comment-input-row input,
+        body.dark-mode .ratio-select {
+            background-color: #333333;
+            color: #EEEEEE;
+            border-color: #555555;
+        }
+
+        body.dark-mode .comment-item {
+            background-color: #333333;
+            color: #EEEEEE;
+        }
+
+        body.dark-mode .deleteconfirm-buttons button:not(.danger),
+        body.dark-mode .modal-cancel,
+        body.dark-mode .detail-actions button {
+            background-color: #333333;
+            color: #EEEEEE;
+            border-color: #555555;
+        }
+
+        /* ===== 반응형 (모바일) ===== */
+        @media (max-width: 767px) {
+
+            body,
+            .top,
+            .header,
+            .main,
+            .maintop,
+            .toolbar,
+            .banner {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            body,
+            .top {
+                height: auto;
+            }
+
+            .banner {
+                height: auto;
+                aspect-ratio: 16 / 9;
+            }
+
+            .main {
+                flex-direction: column;
+            }
+
+            .search {
+                flex-direction: column;
+                height: auto;
+                align-items: stretch;
+                gap: 12px;
+                padding: 12px 0;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .inputbox {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .write-btn {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .cardlist {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: none;
+                width: 100%;
+            }
+
+            .dogGrid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal,
+            .detail-modal {
+                width: 90vw;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="top">
+        <!-- 해더영역 -->
+        <header class="header">
+            <!-- 다크모드 버튼, 제목 -->
+            <div class="diarytitle">
+                <span class="다이어리제목">지수의 다이어리</span>
+                <div class="darkmode">
+                    <label for="darkModeCheckbox">다크모드</label>
+                    <input type="checkbox" id="darkModeCheckbox" class="darkModeToggle" />
+                </div>
+            </div>
+
+        </header>
+
+        <div class="banner">
+            <img id=배너 src="./이미지모음/배너.png" />
+        </div>
+
+        <!-- 메인영역 -->
+        <main class="main">
+
+            <!-- 메인영역 안에는 탭 메뉴, 검색, 카드목록, 페이지번호 등이 들어감 -->
+            <div class="maintop">
+                <div class="bin">
+                    <span class="diarybin">일기보관함</span>
+                    <span class="photobin">사진보관함</span>
+
+                </div>
+
+                <div class="list-panel" id="listPanel">
+                    <div class="search">
+                        <div class="toolbar">
+
+                            <select id="filter" class="filter">
+                                <option value="all">전체</option>
+                                <option value="happy">기쁨</option>
+                                <option value="sadness">슬픔</option>
+                                <option value="angry">화남</option>
+                                <option value="proud">뿌듯</option>
+                                <option value="bored">따분</option>
+                            </select>
+                            <input type="text" class="inputbox" placeholder="검색어를 입력해 주세요." />
+
+                        </div>
+                        <button type="button" class="write-btn" id="writeBtn">+ 일기쓰기</button>
+                    </div>
+                    <div class="cardlist">
+                        <div class="card">
+                            <div class="card-thumb proud">
+                                <img src="./이미지모음/proud.png" alt="기쁨 이모티콘" class="card-emoji" />
+                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
+                                        height=25px alt="삭제" /></button>
+                            </div>
+                            <div class="card-meta"><span class="card-emotion proud">뿌듯</span><span
+                                    class="card-date">2026.08.03</span></div>
+                            <p class="card-desc">아침에 일어나기 힘들었지만 잘 일어남~!</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-thumb sadness">
+                                <img src="./이미지모음/sadness.png" alt="슬픔 이모티콘" class="card-emoji" />
+                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
+                                        height=25px alt="삭제" /></button>
+                            </div>
+                            <div class="card-meta"><span class="card-emotion sadness">슬픔</span><span
+                                    class="card-date">2026.08.04</span></div>
+                            <p class="card-desc">날씨가 너무 더워서 슬프다.</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-thumb angry">
+                                <img src="./이미지모음/angry.png" alt="화남 이모티콘" class="card-emoji" />
+                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
+                                        height=25px alt="삭제" /></button>
+                            </div>
+                            <div class="card-meta"><span class="card-emotion angry">화남</span><span
+                                    class="card-date">2026.08.05</span></div>
+                            <p class="card-desc">날씨가 이게 맞나? 화가난다.</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-thumb proud">
+                                <img src="./이미지모음/proud.png" alt="뿌듯 이모티콘" class="card-emoji" />
+                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
+                                        height=25px alt="삭제" /></button>
+                            </div>
+                            <div class="card-meta"><span class="card-emotion proud">뿌듯</span><span
+                                    class="card-date">2026.08.06</span></div>
+                            <p class="card-desc">뿌듯 야호,,</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-thumb bored">
+                                <img src="./이미지모음/bored.png" alt="따분 이모티콘" class="card-emoji" />
+                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
+                                        height=25px alt="삭제" /></button>
+                            </div>
+                            <div class="card-meta"><span class="card-emotion bored">따분</span><span
+                                    class="card-date">2026.08.07</span></div>
+                            <p class="card-desc">입맛이 없다...</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-thumb happy">
+                                <img src="./이미지모음/happy.png" alt="기쁨 이모티콘" class="card-emoji" />
+                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
+                                        height=25px alt="삭제" /></button>
+                            </div>
+                            <div class="card-meta"><span class="card-emotion happy">기쁨</span><span
+                                    class="card-date">2026.08.08</span></div>
+                            <p class="card-desc">오늘 저녁부터 날씨가 괜찮네 입추매직~</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-thumb sadness">
+                                <img src="./이미지모음/sadness.png" alt="슬픔 이모티콘" class="card-emoji" />
+                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
+                                        height=25px alt="삭제" /></button>
+                            </div>
+                            <div class="card-meta"><span class="card-emotion sadness">슬픔</span><span
+                                    class="card-date">2026.08.09</span></div>
+                            <p class="card-desc">주말은 너무 짧아...</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-thumb angry">
+                                <img src="./이미지모음/angry.png" alt="화남 이모티콘" class="card-emoji" />
+                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
+                                        height=25px alt="삭제" /></button>
+                            </div>
+                            <div class="card-meta"><span class="card-emotion angry">화남</span><span
+                                    class="card-date">2026.08.10</span></div>
+                            <p class="card-desc">월요일 눈치챙겨</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-thumb proud">
+                                <img src="./이미지모음/proud.png" alt="뿌듯 이모티콘" class="card-emoji" />
+                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
+                                        height=25px alt="삭제" /></button>
+                            </div>
+                            <div class="card-meta"><span class="card-emotion proud">뿌듯</span><span
+                                    class="card-date">2026.08.11</span></div>
+                            <p class="card-desc">오랜만에 운동함^^</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-thumb bored">
+                                <img src="./이미지모음/bored.png" alt="따분 이모티콘" class="card-emoji" />
+                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
+                                        height=25px alt="삭제" /></button>
+                            </div>
+                            <div class="card-meta"><span class="card-emotion bored">따분</span><span
+                                    class="card-date">2026.08.12</span></div>
+                            <p class="card-desc">살 안찌는데 맛난거 없나..</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-thumb happy">
+                                <img src="./이미지모음/happy.png" alt="기쁨 이모티콘" class="card-emoji" />
+                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
+                                        height=25px alt="삭제" /></button>
+                            </div>
+                            <div class="card-meta"><span class="card-emotion happy">기쁨</span><span
+                                    class="card-date">2026.08.12</span></div>
+                            <p class="card-desc">벌써 수요일이야 기쁨~!</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-thumb happy">
+                                <img src="./이미지모음/happy.png" alt="기쁨 이모티콘" class="card-emoji" />
+                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
+                                        height=25px alt="삭제" /></button>
+                            </div>
+                            <div class="card-meta"><span class="card-emotion happy">기쁨</span><span
+                                    class="card-date">2026.08.13</span></div>
+                            <p class="card-desc">낼 점심 닭강정~~~~~~</p>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="photo-panel" id="photoPanel">
+                    <div class="photo-toolbar">
+                        <select class="ratio-select" id="ratioSelect">
+                            <option value="기본형">기본형 1:1</option>
+                            <option value="가로형">가로형 4:3</option>
+                            <option value="세로형">세로형 3:4</option>
+                        </select>
+                    </div>
+                    <div class="dogGrid 기본형" id="dogGrid"></div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- pagination 구역 -->
+    <div class="pagination">
+    <button type="button" class="pagination-btn" onclick="이전페이지기능()">이전페이지</button>
+    <span id="listorder"></span>
+    <button type="button" class="pagination-btn" onclick="다음페이지기능()">다음페이지</button>
+</div>
+
+    
+
+    <!-- 푸터영역 -->
+    <footer class="footer">
+        <div class="copyright">
+            <span class="endtitle">지수의 다이어리</span>
+            <p class="role">대표: 유지수</p>
+            <p class="endcopy">Copyright © 2026. {지수} Co., Ltd.</p>
+        </div>
+
+    </footer>
+
+    <div class="modal-overlay" id="diaryModal" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>일기 작성</h3>
+                <button type="button" class="modal-close" id="modalCloseBtn">✕</button>
+            </div>
+            <div class="modal-darktoggle">
+                <span>다크모드</span>
+                <div class="modal-darkswitch" id="modalDarkSwitch"></div>
+            </div>
+            <form id="diaryForm">
+                <div class="modal-field">
+                    <label for="diaryEmotion">오늘의 감정</label>
+                    <select id="diaryEmotion" required>
+                        <option value="">감정을 선택해주세요</option>
+                        <option value="happy">기쁨</option>
+                        <option value="sadness">슬픔</option>
+                        <option value="angry">화남</option>
+                        <option value="proud">뿌듯</option>
+                        <option value="bored">따분</option>
+                    </select>
+                </div>
+                <div class="modal-field">
+                    <label for="diaryContent">내용</label>
+                    <textarea id="diaryContent" placeholder="오늘 있었던 일을 적어보세요." required></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="modal-cancel" id="modalCancelBtn">취소</button>
+                    <button type="submit" class="modal-submit">등록</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 등록완료 모달 (등록 모달 위에 겹쳐서 뜸) -->
+    <div class="confirm-overlay" id="successOverlay">
+        <div class="confirm-box">
+            <p>등록이 완료되었습니다.</p>
+            <button type="button" id="successOkBtn">확인</button>
+        </div>
+    </div>
+
+    <!-- 일기 상세보기 모달 -->
+    <div class="detail-overlay" id="detailOverlay">
+        <div class="detail-modal">
+            <div class="detail-header">
+                <div class="card-meta" style="width:100%;">
+                    <span class="card-emotion" id="detailEmotion"></span>
+                    <span class="card-date" id="detailDate"></span>
+                </div>
+                <button type="button" class="detail-close" id="detailCloseBtn">✕</button>
+            </div>
+
+            <p class="detail-content" id="detailContent"></p>
+
+            <div class="detail-actions">
+                <button type="button" id="detailCopyBtn">복사하기</button>
+                <button type="button" id="detailDeleteBtn">삭제하기</button>
+            </div>
+
+            <div class="comment-section" id="commentSection">
+                <div class="comment-list" id="commentList"></div>
+                <form class="comment-input-row" id="commentForm">
+                    <input type="text" id="commentInput" placeholder="댓글을 입력해 주세요." />
+                    <button type="submit">등록</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 삭제 확인 모달 -->
+    <div class="deleteconfirm-overlay" id="deleteConfirmOverlay">
+        <div class="deleteconfirm-box">
+            <p>이 일기를 삭제할까요?</p>
+            <div class="deleteconfirm-buttons">
+                <button type="button" id="deleteConfirmCancel">취소</button>
+                <button type="button" class="danger" id="deleteConfirmOk">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 토스트 알림 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 맨 위로 가기 버튼 -->
+    <button type="button" class="scroll-top-btn" id="scrollTopBtn">⌃</button>
+
+    <script>
+        /* ============================================================
+           0. 유틸 함수 (디바운스 / 쓰로틀)
+           ============================================================ */
+
+        // 디바운스: 마지막 입력 후 delay(ms)가 지나야 fn을 딱 한 번 실행
+        function 디바운스(fn, delay) {
+            let 타이머 = null;
+            return function (...args) {
+                clearTimeout(타이머);
+                타이머 = setTimeout(() => fn.apply(this, args), delay);
+            };
+        }
+
+        // 쓰로틀: delay(ms) 동안은 fn을 다시 실행하지 않고 무시
+        function 쓰로틀(fn, delay) {
+            let 대기중 = false;
+            return function (...args) {
+                if (대기중) return;
+                대기중 = true;
+                fn.apply(this, args);
+                setTimeout(() => { 대기중 = false; }, delay);
+            };
+        }
+
+        /* ============================================================
+           1. 기본 요소 찾아두기
+           ============================================================ */
+        const darkModeCheckbox = document.getElementById("darkModeCheckbox");
+
+        // 체크박스가 켜져있는지(checked) 여부에 맞춰서 body에 dark-mode 클래스를 붙였다 뗐다
+        darkModeCheckbox.addEventListener("change", function () {
+            document.body.classList.toggle("dark-mode", darkModeCheckbox.checked);
+        });
+
+        const filterSelect = document.getElementById("filter");
+        const searchInput = document.querySelector(".inputbox");
+        const cardList = document.querySelector(".cardlist");
+        const searchBar = document.querySelector(".search");
+
+        const writeBtn = document.getElementById("writeBtn");
+        const diaryModal = document.getElementById("diaryModal");
+        const modalCloseBtn = document.getElementById("modalCloseBtn");
+        const modalCancelBtn = document.getElementById("modalCancelBtn");
+        const diaryForm = document.getElementById("diaryForm");
+        const diaryEmotion = document.getElementById("diaryEmotion");
+        const diaryContent = document.getElementById("diaryContent");
+        const modalDarkSwitch = document.getElementById("modalDarkSwitch");
+
+        const successOverlay = document.getElementById("successOverlay");
+        const successOkBtn = document.getElementById("successOkBtn");
+
+        const detailOverlay = document.getElementById("detailOverlay");
+        const detailCloseBtn = document.getElementById("detailCloseBtn");
+        const detailEmotion = document.getElementById("detailEmotion");
+        const detailDate = document.getElementById("detailDate");
+        const detailContent = document.getElementById("detailContent");
+        const detailCopyBtn = document.getElementById("detailCopyBtn");
+        const detailDeleteBtn = document.getElementById("detailDeleteBtn");
+        const commentSection = document.getElementById("commentSection");
+        const commentList = document.getElementById("commentList");
+        const commentForm = document.getElementById("commentForm");
+        const commentInput = document.getElementById("commentInput");
+
+        const deleteConfirmOverlay = document.getElementById("deleteConfirmOverlay");
+        const deleteConfirmCancel = document.getElementById("deleteConfirmCancel");
+        const deleteConfirmOk = document.getElementById("deleteConfirmOk");
+
+        const toast = document.getElementById("toast");
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+        const diaryTab = document.querySelector(".diarybin");
+        const photoTab = document.querySelector(".photobin");
+        const listPanel = document.getElementById("listPanel");
+        const photoPanel = document.getElementById("photoPanel");
+        const ratioSelect = document.getElementById("ratioSelect");
+        const dogGrid = document.getElementById("dogGrid");
+
+        // 감정 종류별로 라벨/아이콘 파일명을 미리 묶어둔 사전(딕셔너리)
+        const emotionData = {
+            happy: { label: "기쁨", icon: "happy.png" },
+            sadness: { label: "슬픔", icon: "sadness.png" },
+            angry: { label: "화남", icon: "angry.png" },
+            proud: { label: "뿌듯", icon: "proud.png" },
+            bored: { label: "따분", icon: "bored.png" },
+        };
+
+        /* ============================================================
+           2. 일기목록: 감정필터 + 검색(디바운스) + 스크롤 색반전
+           ============================================================ */
+        function 카드검색및필터링() {
+            const 선택감정 = filterSelect.value;          // all / happy / ...
+            const 검색어 = searchInput.value.trim();
+
+            const cards = cardList.querySelectorAll(".card");
+
+            cards.forEach(function (card) {
+                const thumb = card.querySelector(".card-thumb");
+                const emotion = thumb.classList[1];           // "card-thumb happy" → "happy"
+                const desc = card.querySelector(".card-desc").textContent;
+
+                const 감정일치 = 선택감정 === "all" || 선택감정 === emotion;
+                const 검색어일치 = 검색어 === "" || desc.includes(검색어);
+
+                card.style.display = (감정일치 && 검색어일치) ? "flex" : "none";
+            });
+        }
+
+        filterSelect.addEventListener("change", 카드검색및필터링);
+        searchInput.addEventListener("input", 디바운스(카드검색및필터링, 700));
+
+        // 스크롤을 내리면 검색바 배경색 반전 (sticky 상태에서)
+        window.addEventListener("scroll", function () {
+            if (window.scrollY > 100) {
+                searchBar.classList.add("scrolled");
+            } else {
+                searchBar.classList.remove("scrolled");
+            }
+        });
+
+        // 맨 위로 가기 버튼: 스크롤 위치와 상관없이 항상 눌러서 맨 위로
+        scrollTopBtn.addEventListener("click", function () {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        /* ============================================================
+           3. 카드 클릭(상세보기) / 삭제(X버튼, 이벤트버블링 방지)
+           ============================================================ */
+        let cardIdCounter = 0;
+        function 카드아이디부여(card) {
+            if (!card.dataset.id) {
+                cardIdCounter++;
+                card.dataset.id = "card-" + cardIdCounter;
+            }
+            return card.dataset.id;
+        }
+
+        // 카드 하나에 "클릭하면 상세보기", "X누르면 삭제" 이벤트를 걸어주는 함수
+        // → 처음부터 있던 카드에도, 새로 만든 카드에도 똑같이 사용
+        function 카드이벤트연결(card) {
+            카드아이디부여(card);
+
+            card.addEventListener("click", function () {
+                열기상세(card);
+            });
+
+            const closeBtn = card.querySelector(".card-close");
+            closeBtn.addEventListener("click", function (e) {
+                e.stopPropagation(); // ← 이게 없으면 삭제 버튼 클릭이 카드 클릭(상세보기)까지 번져버려요
+                카드삭제대상 = card;
+                deleteConfirmOverlay.style.display = "flex";
+            });
+        }
+
+        // 페이지에 처음부터 있던 12개 카드 전부에 이벤트 연결
+        document.querySelectorAll(".card").forEach(카드이벤트연결);
+
+        let 카드삭제대상 = null;
+
+        deleteConfirmCancel.addEventListener("click", function () {
+            카드삭제대상 = null;
+            deleteConfirmOverlay.style.display = "none";
+        });
+
+        deleteConfirmOk.addEventListener("click", function () {
+            if (카드삭제대상) {
+                카드삭제대상.remove();
+            }
+            deleteConfirmOverlay.style.display = "none";
+            상세닫기(); // 상세보기 중에 삭제한 경우 상세 모달도 같이 닫기
+            카드페이지표시(); // 카드 개수가 바뀌었으니 페이지 다시 나누기
+            페이지버튼그리기();
+        });
+
+        /* ============================================================
+           4. 일기 상세보기 모달 (댓글 / 복사 / 삭제)
+           ============================================================ */
+        let 상세보기중인카드 = null;
+        const 댓글저장소 = {}; // { "card-1": ["댓글1", "댓글2"], ... }
+
+        function 열기상세(card) {
+            상세보기중인카드 = card;
+            const id = 카드아이디부여(card);
+            const emotion = card.querySelector(".card-thumb").classList[1];
+            const emotionLabel = card.querySelector(".card-emotion").textContent;
+            const date = card.querySelector(".card-date").textContent;
+            const content = card.dataset.content || card.querySelector(".card-desc").textContent;
+
+            detailEmotion.textContent = emotionLabel;
+            detailEmotion.className = "card-emotion " + emotion;
+            detailDate.textContent = date;
+            detailContent.textContent = content;
+
+            if (!댓글저장소[id]) 댓글저장소[id] = [];
+            댓글목록그리기(id);
+
+            detailOverlay.style.display = "flex";
+            document.body.style.overflow = "hidden";
+
+            // 진입 시 댓글 위치로 부드럽게 스크롤
+            setTimeout(function () {
+                commentSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 150);
+        }
+
+        function 상세닫기() {
+            detailOverlay.style.display = "none";
+            document.body.style.overflow = "";
+        }
+
+        function 댓글목록그리기(id) {
+            commentList.innerHTML = 댓글저장소[id].map(function (댓글) {
+                return `<div class="comment-item">${댓글}</div>`;
+            }).join("");
+        }
+
+        commentForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            if (commentInput.value.trim() === "" || !상세보기중인카드) return;
+
+            const id = 카드아이디부여(상세보기중인카드);
+            댓글저장소[id].push(commentInput.value.trim());
+            댓글목록그리기(id);
+            commentInput.value = "";
+        });
+
+        detailCloseBtn.addEventListener("click", 상세닫기);
+
+        // 여백(오버레이 자체) 클릭시에만 닫히도록
+        detailOverlay.addEventListener("click", function (e) {
+            if (e.target === detailOverlay) 상세닫기();
+        });
+
+        // 복사 버튼 → 클립보드 복사 + 토스트
+        detailCopyBtn.addEventListener("click", function () {
+            navigator.clipboard.writeText(detailContent.textContent).then(function () {
+                토스트보이기("클립보드에 복사되었습니다.");
+            });
+        });
+
+        // 삭제 버튼 → 삭제 확인 모달
+        detailDeleteBtn.addEventListener("click", function () {
+            카드삭제대상 = 상세보기중인카드;
+            deleteConfirmOverlay.style.display = "flex";
+        });
+
+        /* ============================================================
+           5. 토스트
+           ============================================================ */
+        let 토스트타이머 = null;
+        function 토스트보이기(message) {
+            toast.textContent = message;
+            toast.classList.add("show");
+            clearTimeout(토스트타이머);
+            토스트타이머 = setTimeout(function () {
+                toast.classList.remove("show");
+            }, 2000);
+        }
+
+        /* ============================================================
+           6. 일기 등록 모달 (열기/닫기/ESC/여백클릭/다크토글/등록완료)
+           ============================================================ */
+        function openModal() {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            diaryModal.style.display = "flex";
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal() {
+            diaryModal.style.display = "none";
+            document.body.style.overflow = "";
+            diaryForm.reset();
+        }
+
+        writeBtn.addEventListener("click", openModal);
+        modalCloseBtn.addEventListener("click", closeModal);
+        modalCancelBtn.addEventListener("click", closeModal);
+
+        // 모달 여백(오버레이 자체) 클릭시 닫기
+        diaryModal.addEventListener("click", function (e) {
+            if (e.target === diaryModal) closeModal();
+        });
+
+        // ESC 키로 열려있는 모달들 닫기
+        window.addEventListener("keydown", function (e) {
+            if (e.key !== "Escape") return;
+            if (diaryModal.style.display === "flex") closeModal();
+            if (successOverlay.style.display === "flex") successOverlay.style.display = "none";
+            if (detailOverlay.style.display === "flex") 상세닫기();
+            if (deleteConfirmOverlay.style.display === "flex") deleteConfirmOverlay.style.display = "none";
+        });
+
+        // 등록 모달 안 다크모드 토글 (모달에만 적용)
+        modalDarkSwitch.addEventListener("click", function () {
+            modalDarkSwitch.classList.toggle("on");
+            document.querySelector(".modal").classList.toggle("dark");
+        });
+
+        successOkBtn.addEventListener("click", function () {
+            successOverlay.style.display = "none";
+        });
+
+        // 폼 제출(등록 버튼 클릭) 시 실행
+        diaryForm.addEventListener("submit", function (e) {
+            e.preventDefault(); // 원래 폼 제출하면 새로고침되는데, 그거 막는 거예요
+
+            const emotionKey = diaryEmotion.value;      // "happy" 같은 값
+            const info = emotionData[emotionKey];       // 그 값에 맞는 라벨/아이콘 꺼내기
+
+            const today = new Date();
+            const dateText = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, "0")}.${String(today.getDate()).padStart(2, "0")}`;
+
+            // 새 카드를 통째로 만들어서
+            const card = document.createElement("div");
+            card.className = "card";
+            card.dataset.content = diaryContent.value; // 상세보기에서 쓸 전체 내용 저장
+            card.innerHTML = `
+    <div class="card-thumb ${emotionKey}">
+      <img src="./이미지모음/${info.icon}" alt="${info.label} 이모티콘" class="card-emoji" />
+      <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px" height="25px" alt="삭제" /></button>
+    </div>
+    <div class="card-meta">
+      <span class="card-emotion ${emotionKey}">${info.label}</span>
+      <span class="card-date">${dateText}</span>
+    </div>
+    <p class="card-desc">${diaryContent.value}</p>
+  `;
+
+            cardList.prepend(card);   // 그리드 맨 앞에 새 카드로 끼워넣기
+            카드이벤트연결(card);      // 새 카드에도 상세보기/삭제 이벤트 연결
+
+            closeModal();
+            successOverlay.style.display = "flex"; // 등록완료 중첩 모달 띄우기
+            카드페이지표시(); // 카드가 하나 늘었으니 페이지 다시 나누기
+            페이지버튼그리기();
+        });
+
+        /* ============================================================
+           7. 탭 전환 (일기보관함 ↔ 사진보관함)
+           ============================================================ */
+        diaryTab.addEventListener("click", function () {
+            listPanel.classList.remove("hidden");
+            photoPanel.classList.remove("active");
+            diaryTab.className = "diarybin";
+            photoTab.className = "photobin";
+        });
+
+        photoTab.addEventListener("click", function () {
+            listPanel.classList.add("hidden");
+            photoPanel.classList.add("active");
+            photoTab.className = "diarybin";  // 활성 탭 스타일 재사용
+            diaryTab.className = "photobin";  // 비활성 탭 스타일 재사용
+
+            if (강아지사진불러왔는지 === false) {
+                강아지사진불러오기();
+            }
+        });
+
+        /* ============================================================
+           8. 사진보관함: fetch API + object-fit + 비율필터 + 무한스크롤
+           ============================================================ */
+        let 강아지사진불러왔는지 = false;
+        let 추가로드횟수 = 0;          // 지금까지 "추가로" 몇 번 불러왔는지 세는 변수
+        const 최대추가로드횟수 = 4;     // 처음 10장 + 4번(40장) = 최대 50장까지만
+        let 사진로딩중 = false;         // fetch가 아직 안 끝났는데 또 요청 나가는 것 방지
+
+        // 강아지 사진 하나짜리 컴포넌트 (재사용을 위해 함수로 분리)
+        function 강아지사진컴포넌트(사진주소) {
+            return `
+                <div class="dogThumb">
+                    <img src="${사진주소}" alt="강아지 사진" loading="lazy" onload="this.classList.add('loaded')" />
+                </div>
+            `;
+        }
+
+        function 강아지사진불러오기() {
+            강아지사진불러왔는지 = true;
+            추가로드횟수 = 0; // 탭을 새로 열 때마다 카운트 초기화
+
+            fetch("https://dog.ceo/api/breeds/image/random/10")
+                .then(function (response) { return response.json(); })
+                .then(function (data) {
+                    dogGrid.innerHTML = data.message.map(강아지사진컴포넌트).join("");
+                })
+                .catch(function () {
+                    강아지사진불러왔는지 = false;
+                    dogGrid.innerHTML = "<p>사진을 불러오지 못했어요.</p>";
+                });
+        }
+
+        function 강아지사진추가불러오기() {
+            // 이미 최대 횟수만큼 불러왔거나, 지금 한창 불러오는 중이면 중복 요청 막기
+            if (추가로드횟수 >= 최대추가로드횟수 || 사진로딩중) return;
+            사진로딩중 = true;
+
+            fetch("https://dog.ceo/api/breeds/image/random/10")
+                .then(function (response) { return response.json(); })
+                .then(function (data) {
+                    dogGrid.insertAdjacentHTML("beforeend", data.message.map(강아지사진컴포넌트).join(""));
+                    추가로드횟수++;
+                    사진로딩중 = false;
+
+                    // 방금 불러온 게 마지막 묶음이었으면 안내 문구를 한 번 붙여줌
+                    if (추가로드횟수 >= 최대추가로드횟수) {
+                        dogGrid.insertAdjacentHTML("afterend", '<p class="dog-end-msg">사진을 모두 불러왔어요.</p>');
+                    }
+                })
+                .catch(function () {
+                    사진로딩중 = false;
+                });
+        }
+
+        ratioSelect.addEventListener("change", function (e) {
+            dogGrid.className = "dogGrid " + e.target.value;
+        });
+
+        // 무한스크롤: "사진 그리드" 기준으로만 70% 계산 (푸터는 아예 포함 안 시킴)
+        window.addEventListener("scroll", 쓰로틀(function () {
+            if (!photoPanel.classList.contains("active")) return;
+
+            const 그리드끝지점 = dogGrid.getBoundingClientRect().bottom + window.scrollY;
+            const 스크롤퍼센트 = (window.scrollY + window.innerHeight) / 그리드끝지점;
+
+            if (스크롤퍼센트 >= 0.7) {
+                강아지사진추가불러오기();
+            }
+        }, 700));
+
+        /* ============================================================
+           9. 페이지네이션 (.cardlist 안 카드 개수 기준, 12개씩 한 페이지)
+           ============================================================ */
+        const 페이지당개수 = 12; // .cardlist 그리드가 4열x3행 = 12칸이라 12개씩 끊어요
+        let 시작페이지 = 1;
+
+        // 항상 "지금 이 순간" .cardlist 안에 있는 카드를 다시 세요
+        // (카드를 추가/삭제하면 개수가 바뀌니까, 미리 변수에 담아두면 안 돼요)
+        function 전체카드가져오기() {
+            return cardList.querySelectorAll(".card");
+        }
+
+        function 마지막페이지구하기() {
+            const 전체개수 = 전체카드가져오기().length;
+            return Math.max(1, Math.ceil(전체개수 / 페이지당개수));
+        }
+
+        // 지금 페이지에 해당하는 카드만 보여주고, 나머지는 숨기기
+        function 카드페이지표시() {
+            const cards = 전체카드가져오기();
+            const 시작인덱스 = (시작페이지 - 1) * 페이지당개수;
+            const 끝인덱스 = 시작인덱스 + 페이지당개수;
+
+            cards.forEach(function (card, index) {
+                card.style.display = (index >= 시작인덱스 && index < 끝인덱스) ? "flex" : "none";
+            });
+        }
+
+        function 이전페이지기능() {
+            if (시작페이지 === 1) {
+                alert("첫 페이지입니다.");
+                return;
+            }
+            시작페이지 = 시작페이지 - 1;
+            카드페이지표시();
+            페이지버튼그리기();
+        }
+
+        function 다음페이지기능() {
+            if (시작페이지 >= 마지막페이지구하기()) {
+                alert("마지막 페이지입니다.");
+                return;
+            }
+            시작페이지 = 시작페이지 + 1;
+            카드페이지표시();
+            페이지버튼그리기();
+        }
+
+        // 페이지 번호 버튼(1, 2, 3...)을 마지막페이지 개수만큼 그려주는 함수
+        function 페이지버튼그리기() {
+            const 마지막페이지 = 마지막페이지구하기();
+
+            let 버튼들 = "";
+            for (let i = 1; i <= 마지막페이지; i++) {
+                const 클래스 = (i === 시작페이지) ? "page-btn active" : "page-btn";
+                버튼들 += `<button type="button" class="${클래스}" onclick="페이지이동(${i})">${i}</button>`;
+            }
+
+            document.getElementById("listorder").innerHTML = 버튼들;
+        }
+
+        // 숫자 버튼을 직접 눌렀을 때 그 페이지로 바로 이동
+        function 페이지이동(번호) {
+            시작페이지 = 번호;
+            카드페이지표시();
+            페이지버튼그리기();
+        }
+
+        // 페이지가 다 로드된 다음에 첫 화면(1페이지) 그리기
+        window.addEventListener("load", function () {
+            카드페이지표시();
+            페이지버튼그리기();
+        });
+    </script>
+
+
+
+
+
+</body>
+
+</html>
