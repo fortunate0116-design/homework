@@ -4,25 +4,28 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    
     <title>JS의 감정일기</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poor+Story&display=swap" rel="stylesheet">
-    <style>
-        html {
-            font-size: 16px;
-        }
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poor+Story&display=swap" rel="stylesheet">
+    
 
+    
+    <style>
         * {
             box-sizing: border-box;
             outline: none;
             font-family: "Poor Story", system-ui;
         }
 
+        html {
+            font-size: 16px;
+        }
+
         body {
-            width: 100%;
             margin: 0;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
             gap: 40px;
@@ -44,11 +47,20 @@
         /* 해더 부분의 높이, 가로배치, 양쪽 정렬 등을 설정 */
         .header {
             width: 1920px;
-            height: 60px;
-            padding-left: 20px;
-            padding-right: 20px;
+            height: 430px;
+            /* padding-left: 20px;
+            padding-right: 20px; */
             max-width: 1168px;
             min-width: 320px;
+        }
+
+        .diarytop {
+            width: 1168px;
+            height: 90px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
             position: sticky;
             top: 0;
             z-index: 10;
@@ -57,22 +69,13 @@
         }
 
         .diarytitle {
-            
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .다이어리제목 {
             font-weight: 700;
             font-size: 30px;
             line-height: 16px;
             letter-spacing: -0.01em;
             /* -1% × 18px(font-size) = -0.18px ≈ -0.01em */
             color: #494949;
+            cursor: pointer;
         }
 
         .darkmode {
@@ -114,7 +117,7 @@
 
         /* :checked → 체크(켜짐) 상태일 때의 모양 */
         .darkModeToggle:checked {
-            background-color: #000000;
+            background-color: #079e34;
         }
 
         .darkModeToggle:checked::after {
@@ -126,18 +129,16 @@
             width: 1168px;
             height: 340px;
             border-radius: 24px;
-            /* max-width: 1168px;
-                    min-width: 320px; */
-            /* background-image: none; */
             background-color: #D9D9D9;
             max-width: 1168px;
             min-width: 320px;
         }
 
         #배너 {
-            width: 1168px;
-            height: 340px;
+            width: 100%;
+            height: 100%;
             border-radius: 24px;
+            object-fit: cover;
         }
 
         .main {
@@ -148,15 +149,9 @@
             min-width: 320px;
         }
 
-        .maintop {
-            display: flex;
-            flex-direction: column;
-            width: 1168px;
-            gap: 32px;
-        }
-
         .bin {
             display: flex;
+            width: 1168px;
             height: 48px;
             gap: 16px;
             flex-direction: row;
@@ -220,6 +215,7 @@
             padding: 12px 16px 12px 16px;
             border-radius: 100px;
             border-width: 1px;
+            border: 1px solid #E4E4E4;
             font-size: 16px;
         }
 
@@ -232,14 +228,12 @@
             background-color: rgb(2, 2, 2);
             color: white;
             font-size: 18px;
+            cursor: pointer;
         }
 
         .cardlist {
             display: grid;
-
             justify-content: center;
-            /* width: 1168px;
-                    height: 936px; */
 
             grid-template-columns: 274px 274px 274px 274px;
             grid-template-rows: 296px 296px 296px;
@@ -324,17 +318,19 @@
 
         .modal-overlay {
             position: fixed;
-            /* 스크롤 상관없이 화면 기준 고정 (지난번 힌트가 이거였어요!) */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            /* 스크롤 상관없이 화면 기준 고정 */
+
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 100;
             /* 다른 요소들보다 위에 뜨도록 */
+            
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
         }
 
         .modal {
@@ -367,11 +363,26 @@
         }
 
         .modal-field select,
-        .modal-field textarea {
+        .modal-field textarea,
+        .modal-field input[type="text"] {
             padding: 12px;
             border-radius: 8px;
             border: 1px solid #E4E4E4;
             font-size: 14px;
+        }
+
+        .emotion-radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 16px;
+            font-size: 14px;
+        }
+
+        .emotion-radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
         }
 
         .modal-field textarea {
@@ -400,6 +411,12 @@
             background-color: #000000;
             color: #FFFFFF;
             cursor: pointer;
+        }
+
+        /* 제목/내용이 안 채워지면 버튼이 눌리지 않는 상태로 보이게 */
+        .modal-submit:disabled {
+            background-color: #CCCCCC;
+            cursor: not-allowed;
         }
 
         .card {
@@ -495,12 +512,8 @@
         .filter {
             border: 1px solid #E4E4E4;
             border-radius: 8px;
-            background-color: #FFFFFF;
+            background-color: #ffffff;
             cursor: pointer;
-        }
-
-        .inputbox {
-            border: 1px solid #E4E4E4;
         }
 
         /* ===== 카드 이미지 object-fit ===== */
@@ -623,14 +636,6 @@
             }
         }
 
-        /* ===== 모달 안 다크모드 토글 ===== */
-        .modal-darktoggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.875rem;
-        }
-
         .modal-darkswitch {
             width: 40px;
             height: 22px;
@@ -667,7 +672,8 @@
         }
 
         .modal.dark .modal-field select,
-        .modal.dark .modal-field textarea {
+        .modal.dark .modal-field textarea,
+        .modal.dark .modal-field input[type="text"] {
             background-color: #333333;
             color: #EEEEEE;
             border-color: #555555;
@@ -969,6 +975,7 @@
 
         body.dark-mode .modal-field select,
         body.dark-mode .modal-field textarea,
+        body.dark-mode .modal-field input[type="text"],
         body.dark-mode .comment-input-row input,
         body.dark-mode .ratio-select {
             background-color: #333333;
@@ -995,6 +1002,7 @@
             body,
             .top,
             .header,
+            .diarytop,
             .main,
             .maintop,
             .toolbar,
@@ -1046,6 +1054,18 @@
                 width: 100%;
             }
 
+            .card,
+            .card-thumb,
+            .card-emoji {
+                width: 100%;
+            }
+
+            .card-thumb,
+            .card-emoji {
+                height: 45vw;
+                max-height: 208px;
+            }
+
             .dogGrid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -1059,24 +1079,30 @@
 
 </head>
 
+
+
+
+
+
 <body>
+    
     <div class="top">
         <!-- 해더영역 -->
-        <header class="header">
-            <!-- 다크모드 버튼, 제목 -->
-            <div class="diarytitle">
-                <span class="다이어리제목">지수의 다이어리</span>
-                <div class="darkmode">
-                    <label for="darkModeCheckbox">다크모드</label>
-                    <input type="checkbox" id="darkModeCheckbox" class="darkModeToggle" />
-                </div>
+    <header class="header">
+        <!-- 다크모드 버튼, 제목 -->
+        <div class="diarytop">
+            <span class="diarytitle" id="homeTitleBtn">지수의 다이어리</span>
+            <div class="darkmode">
+                <label for="darkModeCheckbox">다크모드</label>
+                <input type="checkbox" id="darkModeCheckbox" class="darkModeToggle" />
             </div>
-
-        </header>
-
+        </div>
         <div class="banner">
             <img id=배너 src="./이미지모음/배너.png" />
         </div>
+    </header>
+
+
 
         <!-- 메인영역 -->
         <main class="main">
@@ -1106,140 +1132,7 @@
                         </div>
                         <button type="button" class="write-btn" id="writeBtn">+ 일기쓰기</button>
                     </div>
-                    <div class="cardlist">
-                        <div class="card">
-                            <div class="card-thumb proud">
-                                <img src="./이미지모음/proud.png" alt="기쁨 이모티콘" class="card-emoji" />
-                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
-                                        height=25px alt="삭제" /></button>
-                            </div>
-                            <div class="card-meta"><span class="card-emotion proud">뿌듯</span><span
-                                    class="card-date">2026.08.03</span></div>
-                            <p class="card-desc">아침에 일어나기 힘들었지만 잘 일어남~!</p>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-thumb sadness">
-                                <img src="./이미지모음/sadness.png" alt="슬픔 이모티콘" class="card-emoji" />
-                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
-                                        height=25px alt="삭제" /></button>
-                            </div>
-                            <div class="card-meta"><span class="card-emotion sadness">슬픔</span><span
-                                    class="card-date">2026.08.04</span></div>
-                            <p class="card-desc">날씨가 너무 더워서 슬프다.</p>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-thumb angry">
-                                <img src="./이미지모음/angry.png" alt="화남 이모티콘" class="card-emoji" />
-                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
-                                        height=25px alt="삭제" /></button>
-                            </div>
-                            <div class="card-meta"><span class="card-emotion angry">화남</span><span
-                                    class="card-date">2026.08.05</span></div>
-                            <p class="card-desc">날씨가 이게 맞나? 화가난다.</p>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-thumb proud">
-                                <img src="./이미지모음/proud.png" alt="뿌듯 이모티콘" class="card-emoji" />
-                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
-                                        height=25px alt="삭제" /></button>
-                            </div>
-                            <div class="card-meta"><span class="card-emotion proud">뿌듯</span><span
-                                    class="card-date">2026.08.06</span></div>
-                            <p class="card-desc">뿌듯 야호,,</p>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-thumb bored">
-                                <img src="./이미지모음/bored.png" alt="따분 이모티콘" class="card-emoji" />
-                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
-                                        height=25px alt="삭제" /></button>
-                            </div>
-                            <div class="card-meta"><span class="card-emotion bored">따분</span><span
-                                    class="card-date">2026.08.07</span></div>
-                            <p class="card-desc">입맛이 없다...</p>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-thumb happy">
-                                <img src="./이미지모음/happy.png" alt="기쁨 이모티콘" class="card-emoji" />
-                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
-                                        height=25px alt="삭제" /></button>
-                            </div>
-                            <div class="card-meta"><span class="card-emotion happy">기쁨</span><span
-                                    class="card-date">2026.08.08</span></div>
-                            <p class="card-desc">오늘 저녁부터 날씨가 괜찮네 입추매직~</p>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-thumb sadness">
-                                <img src="./이미지모음/sadness.png" alt="슬픔 이모티콘" class="card-emoji" />
-                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
-                                        height=25px alt="삭제" /></button>
-                            </div>
-                            <div class="card-meta"><span class="card-emotion sadness">슬픔</span><span
-                                    class="card-date">2026.08.09</span></div>
-                            <p class="card-desc">주말은 너무 짧아...</p>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-thumb angry">
-                                <img src="./이미지모음/angry.png" alt="화남 이모티콘" class="card-emoji" />
-                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
-                                        height=25px alt="삭제" /></button>
-                            </div>
-                            <div class="card-meta"><span class="card-emotion angry">화남</span><span
-                                    class="card-date">2026.08.10</span></div>
-                            <p class="card-desc">월요일 눈치챙겨</p>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-thumb proud">
-                                <img src="./이미지모음/proud.png" alt="뿌듯 이모티콘" class="card-emoji" />
-                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
-                                        height=25px alt="삭제" /></button>
-                            </div>
-                            <div class="card-meta"><span class="card-emotion proud">뿌듯</span><span
-                                    class="card-date">2026.08.11</span></div>
-                            <p class="card-desc">오랜만에 운동함^^</p>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-thumb bored">
-                                <img src="./이미지모음/bored.png" alt="따분 이모티콘" class="card-emoji" />
-                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
-                                        height=25px alt="삭제" /></button>
-                            </div>
-                            <div class="card-meta"><span class="card-emotion bored">따분</span><span
-                                    class="card-date">2026.08.12</span></div>
-                            <p class="card-desc">살 안찌는데 맛난거 없나..</p>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-thumb happy">
-                                <img src="./이미지모음/happy.png" alt="기쁨 이모티콘" class="card-emoji" />
-                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
-                                        height=25px alt="삭제" /></button>
-                            </div>
-                            <div class="card-meta"><span class="card-emotion happy">기쁨</span><span
-                                    class="card-date">2026.08.12</span></div>
-                            <p class="card-desc">벌써 수요일이야 기쁨~!</p>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-thumb happy">
-                                <img src="./이미지모음/happy.png" alt="기쁨 이모티콘" class="card-emoji" />
-                                <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px"
-                                        height=25px alt="삭제" /></button>
-                            </div>
-                            <div class="card-meta"><span class="card-emotion happy">기쁨</span><span
-                                    class="card-date">2026.08.13</span></div>
-                            <p class="card-desc">낼 점심 닭강정~~~~~~</p>
-                        </div>
-                        
-                    </div>
+                    <div class="cardlist"></div>
                 </div>
 
                 <div class="photo-panel" id="photoPanel">
@@ -1261,12 +1154,12 @@
 
     <!-- pagination 구역 -->
     <div class="pagination">
-    <button type="button" class="pagination-btn" onclick="이전페이지기능()">이전페이지</button>
-    <span id="listorder"></span>
-    <button type="button" class="pagination-btn" onclick="다음페이지기능()">다음페이지</button>
-</div>
+        <button type="button" class="pagination-btn" onclick="이전페이지기능()">이전페이지</button>
+        <span id="listorder"></span>
+        <button type="button" class="pagination-btn" onclick="다음페이지기능()">다음페이지</button>
+    </div>
 
-    
+
 
     <!-- 푸터영역 -->
     <footer class="footer">
@@ -1278,27 +1171,27 @@
 
     </footer>
 
+    <!-- 모달영역 -->
     <div class="modal-overlay" id="diaryModal" style="display:none;">
         <div class="modal">
             <div class="modal-header">
                 <h3>일기 작성</h3>
                 <button type="button" class="modal-close" id="modalCloseBtn">✕</button>
             </div>
-            <div class="modal-darktoggle">
-                <span>다크모드</span>
-                <div class="modal-darkswitch" id="modalDarkSwitch"></div>
-            </div>
             <form id="diaryForm">
                 <div class="modal-field">
-                    <label for="diaryEmotion">오늘의 감정</label>
-                    <select id="diaryEmotion" required>
-                        <option value="">감정을 선택해주세요</option>
-                        <option value="happy">기쁨</option>
-                        <option value="sadness">슬픔</option>
-                        <option value="angry">화남</option>
-                        <option value="proud">뿌듯</option>
-                        <option value="bored">따분</option>
-                    </select>
+                    <label>오늘의 감정</label>
+                    <div class="emotion-radio-group">
+                        <label><input type="radio" name="diaryEmotionRadio" value="happy" checked /> 기쁨</label>
+                        <label><input type="radio" name="diaryEmotionRadio" value="sadness" /> 슬픔</label>
+                        <label><input type="radio" name="diaryEmotionRadio" value="angry" /> 화남</label>
+                        <label><input type="radio" name="diaryEmotionRadio" value="proud" /> 뿌듯</label>
+                        <label><input type="radio" name="diaryEmotionRadio" value="bored" /> 따분</label>
+                    </div>
+                </div>
+                <div class="modal-field">
+                    <label for="diaryTitle">제목</label>
+                    <input type="text" id="diaryTitle" placeholder="제목을 입력해 주세요." required />
                 </div>
                 <div class="modal-field">
                     <label for="diaryContent">내용</label>
@@ -1306,7 +1199,7 @@
                 </div>
                 <div class="modal-buttons">
                     <button type="button" class="modal-cancel" id="modalCancelBtn">취소</button>
-                    <button type="submit" class="modal-submit">등록</button>
+                    <button type="submit" class="modal-submit" id="diarySubmitBtn" disabled>등록</button>
                 </div>
             </form>
         </div>
@@ -1320,33 +1213,7 @@
         </div>
     </div>
 
-    <!-- 일기 상세보기 모달 -->
-    <div class="detail-overlay" id="detailOverlay">
-        <div class="detail-modal">
-            <div class="detail-header">
-                <div class="card-meta" style="width:100%;">
-                    <span class="card-emotion" id="detailEmotion"></span>
-                    <span class="card-date" id="detailDate"></span>
-                </div>
-                <button type="button" class="detail-close" id="detailCloseBtn">✕</button>
-            </div>
-
-            <p class="detail-content" id="detailContent"></p>
-
-            <div class="detail-actions">
-                <button type="button" id="detailCopyBtn">복사하기</button>
-                <button type="button" id="detailDeleteBtn">삭제하기</button>
-            </div>
-
-            <div class="comment-section" id="commentSection">
-                <div class="comment-list" id="commentList"></div>
-                <form class="comment-input-row" id="commentForm">
-                    <input type="text" id="commentInput" placeholder="댓글을 입력해 주세요." />
-                    <button type="submit">등록</button>
-                </form>
-            </div>
-        </div>
-    </div>
+    <!-- 일기 상세보기는 이제 별도 페이지(jsdiary-detail.html)로 이동해요. 카드 클릭 시 그리로 넘어가요. -->
 
     <!-- 삭제 확인 모달 -->
     <div class="deleteconfirm-overlay" id="deleteConfirmOverlay">
@@ -1364,6 +1231,13 @@
 
     <!-- 맨 위로 가기 버튼 -->
     <button type="button" class="scroll-top-btn" id="scrollTopBtn">⌃</button>
+
+
+
+
+
+
+
 
     <script>
         /* ============================================================
@@ -1410,24 +1284,12 @@
         const modalCloseBtn = document.getElementById("modalCloseBtn");
         const modalCancelBtn = document.getElementById("modalCancelBtn");
         const diaryForm = document.getElementById("diaryForm");
-        const diaryEmotion = document.getElementById("diaryEmotion");
+        const diaryTitle = document.getElementById("diaryTitle");
         const diaryContent = document.getElementById("diaryContent");
-        const modalDarkSwitch = document.getElementById("modalDarkSwitch");
+        const diarySubmitBtn = document.getElementById("diarySubmitBtn");
 
         const successOverlay = document.getElementById("successOverlay");
         const successOkBtn = document.getElementById("successOkBtn");
-
-        const detailOverlay = document.getElementById("detailOverlay");
-        const detailCloseBtn = document.getElementById("detailCloseBtn");
-        const detailEmotion = document.getElementById("detailEmotion");
-        const detailDate = document.getElementById("detailDate");
-        const detailContent = document.getElementById("detailContent");
-        const detailCopyBtn = document.getElementById("detailCopyBtn");
-        const detailDeleteBtn = document.getElementById("detailDeleteBtn");
-        const commentSection = document.getElementById("commentSection");
-        const commentList = document.getElementById("commentList");
-        const commentForm = document.getElementById("commentForm");
-        const commentInput = document.getElementById("commentInput");
 
         const deleteConfirmOverlay = document.getElementById("deleteConfirmOverlay");
         const deleteConfirmCancel = document.getElementById("deleteConfirmCancel");
@@ -1435,6 +1297,12 @@
 
         const toast = document.getElementById("toast");
         const scrollTopBtn = document.getElementById("scrollTopBtn");
+        const homeTitleBtn = document.getElementById("homeTitleBtn");
+
+        // 제목 누르면 메인 화면으로
+        homeTitleBtn.addEventListener("click", function () {
+            location.href = "jsdiary.html";
+        });
 
         const diaryTab = document.querySelector(".diarybin");
         const photoTab = document.querySelector(".photobin");
@@ -1443,7 +1311,7 @@
         const ratioSelect = document.getElementById("ratioSelect");
         const dogGrid = document.getElementById("dogGrid");
 
-        // 감정 종류별로 라벨/아이콘 파일명을 미리 묶어둔 사전(딕셔너리)
+        // 감정 종류별로 라벨/아이콘 파일명을 미리 묶어둠
         const emotionData = {
             happy: { label: "기쁨", icon: "happy.png" },
             sadness: { label: "슬픔", icon: "sadness.png" },
@@ -1451,6 +1319,72 @@
             proud: { label: "뿌듯", icon: "proud.png" },
             bored: { label: "따분", icon: "bored.png" },
         };
+
+        /* ============================================================
+           1.5. 일기 데이터 (localStorage에 저장 → 상세페이지랑 데이터를 공유)
+           ============================================================ */
+        const 저장키 = "감정일기목록";
+
+        function 일기목록불러오기() {
+            const 저장된값 = localStorage.getItem(저장키);
+
+            // 처음 실행할 때만 기본 12개로 초기값을 채움
+            const 기본데이터 = [
+                { id: 1, emotion: "proud", title: "일찍 일어난 아침", date: "2026.08.03", content: "아침에 일어나기 힘들었지만 잘 일어남~!", comments: [] },
+                { id: 2, emotion: "sadness", title: "너무 더운 날씨", date: "2026.08.04", content: "날씨가 너무 더워서 슬프다.", comments: [] },
+                { id: 3, emotion: "angry", title: "이상한 날씨", date: "2026.08.05", content: "날씨가 이게 맞나? 화가난다.", comments: [] },
+                { id: 4, emotion: "proud", title: "뿌듯한 하루", date: "2026.08.06", content: "뿌듯 야호,,", comments: [] },
+                { id: 5, emotion: "bored", title: "입맛 없는 날", date: "2026.08.07", content: "입맛이 없다...", comments: [] },
+                { id: 6, emotion: "happy", title: "입추매직", date: "2026.08.08", content: "오늘 저녁부터 날씨가 괜찮네 입추매직~", comments: [] },
+                { id: 7, emotion: "sadness", title: "너무 짧은 주말", date: "2026.08.09", content: "주말은 너무 짧아...", comments: [] },
+                { id: 8, emotion: "angry", title: "월요병", date: "2026.08.10", content: "월요일 눈치챙겨", comments: [] },
+                { id: 9, emotion: "proud", title: "오랜만의 운동", date: "2026.08.11", content: "오랜만에 운동함^^", comments: [] },
+                { id: 10, emotion: "bored", title: "살 안 찌는 고민", date: "2026.08.12", content: "살 안찌는데 맛난거 없나..", comments: [] },
+                { id: 11, emotion: "happy", title: "벌써 수요일", date: "2026.08.12", content: "벌써 수요일이야 기쁨~!", comments: [] },
+                { id: 12, emotion: "happy", title: "낼 점심 메뉴", date: "2026.08.13", content: "낼 점심 닭강정~~~~~~", comments: [] },
+            ];
+
+            if (저장된값 === null) {
+                localStorage.setItem(저장키, JSON.stringify(기본데이터));
+                return 기본데이터;
+            }
+            else {
+                
+                return JSON.parse(저장된값);
+            }
+        }
+
+        let 일기목록 = 일기목록불러오기();
+
+        function 일기목록저장() {
+            localStorage.setItem(저장키, JSON.stringify(일기목록));
+        }
+
+        // 일기 데이터 하나 → 카드 HTML로 바꿔주는 컴포넌트 함수
+        function 카드컴포넌트(일기) {
+            const info = emotionData[일기.emotion];
+            return `
+                <div class="card" data-id="${일기.id}">
+                    <div class="card-thumb ${일기.emotion}">
+                        <img src="./이미지모음/${info.icon}" alt="${info.label} 이모티콘" class="card-emoji" />
+                        <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px" height="25px" alt="삭제" /></button>
+                    </div>
+                    <div class="card-meta">
+                        <span class="card-emotion ${일기.emotion}">${info.label}</span>
+                        <span class="card-date">${일기.date}</span>
+                    </div>
+                    <p class="card-desc">${일기.title}</p>
+                </div>
+            `;
+        }
+
+        // 일기목록 배열을 기준으로 카드 전체를 다시 그림 (추가/삭제할 때마다 호출)
+        function 카드목록그리기() {
+            cardList.innerHTML = 일기목록.map(카드컴포넌트).join("");
+            document.querySelectorAll(".card").forEach(카드이벤트연결);
+            카드페이지표시();
+            페이지버튼그리기();
+        }
 
         /* ============================================================
            2. 일기목록: 감정필터 + 검색(디바운스) + 스크롤 색반전
@@ -1491,124 +1425,42 @@
         });
 
         /* ============================================================
-           3. 카드 클릭(상세보기) / 삭제(X버튼, 이벤트버블링 방지)
+           3. 카드 클릭(상세페이지 이동) / 삭제(X버튼, 이벤트버블링 방지)
            ============================================================ */
-        let cardIdCounter = 0;
-        function 카드아이디부여(card) {
-            if (!card.dataset.id) {
-                cardIdCounter++;
-                card.dataset.id = "card-" + cardIdCounter;
-            }
-            return card.dataset.id;
-        }
-
-        // 카드 하나에 "클릭하면 상세보기", "X누르면 삭제" 이벤트를 걸어주는 함수
-        // → 처음부터 있던 카드에도, 새로 만든 카드에도 똑같이 사용
+        // 카드 하나에 "클릭하면 상세페이지로 이동", "X누르면 삭제" 이벤트를 걸어주는 함수
+        // → 카드목록그리기()가 다시 그릴 때마다 매번 새로 연결해줘야 해요
         function 카드이벤트연결(card) {
-            카드아이디부여(card);
+            const id = card.dataset.id;
 
             card.addEventListener("click", function () {
-                열기상세(card);
+                location.href = "jsdiary-detail.html?id=" + id;
             });
 
             const closeBtn = card.querySelector(".card-close");
             closeBtn.addEventListener("click", function (e) {
-                e.stopPropagation(); // ← 이게 없으면 삭제 버튼 클릭이 카드 클릭(상세보기)까지 번져버려요
-                카드삭제대상 = card;
+                e.stopPropagation(); // ← 이게 없으면 삭제 버튼 클릭이 카드 클릭(페이지이동)까지 번져버려요
+                카드삭제대상아이디 = id;
                 deleteConfirmOverlay.style.display = "flex";
             });
         }
 
-        // 페이지에 처음부터 있던 12개 카드 전부에 이벤트 연결
-        document.querySelectorAll(".card").forEach(카드이벤트연결);
-
-        let 카드삭제대상 = null;
+        let 카드삭제대상아이디 = null;
 
         deleteConfirmCancel.addEventListener("click", function () {
-            카드삭제대상 = null;
+            카드삭제대상아이디 = null;
             deleteConfirmOverlay.style.display = "none";
         });
 
         deleteConfirmOk.addEventListener("click", function () {
-            if (카드삭제대상) {
-                카드삭제대상.remove();
+            if (카드삭제대상아이디 !== null) {
+                // 배열에서 그 id만 빼고 새 배열을 만들어요
+                일기목록 = 일기목록.filter(function (일기) {
+                    return String(일기.id) !== String(카드삭제대상아이디);
+                });
+                일기목록저장();
+                카드목록그리기(); // 배열이 바뀌었으니 카드도 다시 그려요 (페이지 계산까지 포함)
             }
             deleteConfirmOverlay.style.display = "none";
-            상세닫기(); // 상세보기 중에 삭제한 경우 상세 모달도 같이 닫기
-            카드페이지표시(); // 카드 개수가 바뀌었으니 페이지 다시 나누기
-            페이지버튼그리기();
-        });
-
-        /* ============================================================
-           4. 일기 상세보기 모달 (댓글 / 복사 / 삭제)
-           ============================================================ */
-        let 상세보기중인카드 = null;
-        const 댓글저장소 = {}; // { "card-1": ["댓글1", "댓글2"], ... }
-
-        function 열기상세(card) {
-            상세보기중인카드 = card;
-            const id = 카드아이디부여(card);
-            const emotion = card.querySelector(".card-thumb").classList[1];
-            const emotionLabel = card.querySelector(".card-emotion").textContent;
-            const date = card.querySelector(".card-date").textContent;
-            const content = card.dataset.content || card.querySelector(".card-desc").textContent;
-
-            detailEmotion.textContent = emotionLabel;
-            detailEmotion.className = "card-emotion " + emotion;
-            detailDate.textContent = date;
-            detailContent.textContent = content;
-
-            if (!댓글저장소[id]) 댓글저장소[id] = [];
-            댓글목록그리기(id);
-
-            detailOverlay.style.display = "flex";
-            document.body.style.overflow = "hidden";
-
-            // 진입 시 댓글 위치로 부드럽게 스크롤
-            setTimeout(function () {
-                commentSection.scrollIntoView({ behavior: "smooth", block: "start" });
-            }, 150);
-        }
-
-        function 상세닫기() {
-            detailOverlay.style.display = "none";
-            document.body.style.overflow = "";
-        }
-
-        function 댓글목록그리기(id) {
-            commentList.innerHTML = 댓글저장소[id].map(function (댓글) {
-                return `<div class="comment-item">${댓글}</div>`;
-            }).join("");
-        }
-
-        commentForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-            if (commentInput.value.trim() === "" || !상세보기중인카드) return;
-
-            const id = 카드아이디부여(상세보기중인카드);
-            댓글저장소[id].push(commentInput.value.trim());
-            댓글목록그리기(id);
-            commentInput.value = "";
-        });
-
-        detailCloseBtn.addEventListener("click", 상세닫기);
-
-        // 여백(오버레이 자체) 클릭시에만 닫히도록
-        detailOverlay.addEventListener("click", function (e) {
-            if (e.target === detailOverlay) 상세닫기();
-        });
-
-        // 복사 버튼 → 클립보드 복사 + 토스트
-        detailCopyBtn.addEventListener("click", function () {
-            navigator.clipboard.writeText(detailContent.textContent).then(function () {
-                토스트보이기("클립보드에 복사되었습니다.");
-            });
-        });
-
-        // 삭제 버튼 → 삭제 확인 모달
-        detailDeleteBtn.addEventListener("click", function () {
-            카드삭제대상 = 상세보기중인카드;
-            deleteConfirmOverlay.style.display = "flex";
         });
 
         /* ============================================================
@@ -1625,7 +1477,7 @@
         }
 
         /* ============================================================
-           6. 일기 등록 모달 (열기/닫기/ESC/여백클릭/다크토글/등록완료)
+           6. 일기 등록 모달 (열기/닫기/ESC/여백클릭/등록완료)
            ============================================================ */
         function openModal() {
             window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1637,69 +1489,63 @@
             diaryModal.style.display = "none";
             document.body.style.overflow = "";
             diaryForm.reset();
+            diarySubmitBtn.disabled = true; // 닫을 때마다 다시 비활성 상태로
         }
 
         writeBtn.addEventListener("click", openModal);
         modalCloseBtn.addEventListener("click", closeModal);
         modalCancelBtn.addEventListener("click", closeModal);
 
-        // 모달 여백(오버레이 자체) 클릭시 닫기
+        // 모달 옆 여백(오버레이 자체) 클릭시 닫기
         diaryModal.addEventListener("click", function (e) {
             if (e.target === diaryModal) closeModal();
         });
 
-        // ESC 키로 열려있는 모달들 닫기
+        // ESC 키로 열려있는 모달 닫기
         window.addEventListener("keydown", function (e) {
             if (e.key !== "Escape") return;
             if (diaryModal.style.display === "flex") closeModal();
             if (successOverlay.style.display === "flex") successOverlay.style.display = "none";
-            if (detailOverlay.style.display === "flex") 상세닫기();
             if (deleteConfirmOverlay.style.display === "flex") deleteConfirmOverlay.style.display = "none";
-        });
-
-        // 등록 모달 안 다크모드 토글 (모달에만 적용)
-        modalDarkSwitch.addEventListener("click", function () {
-            modalDarkSwitch.classList.toggle("on");
-            document.querySelector(".modal").classList.toggle("dark");
         });
 
         successOkBtn.addEventListener("click", function () {
             successOverlay.style.display = "none";
         });
 
+        // 제목/내용이 둘 다 채워져야만 등록 버튼이 눌리게
+        function 등록버튼확인하기() {
+            diarySubmitBtn.disabled = diaryTitle.value.trim() === "" || diaryContent.value.trim() === "";
+        }
+        diaryTitle.addEventListener("input", 등록버튼확인하기);
+        diaryContent.addEventListener("input", 등록버튼확인하기);
+
         // 폼 제출(등록 버튼 클릭) 시 실행
         diaryForm.addEventListener("submit", function (e) {
-            e.preventDefault(); // 원래 폼 제출하면 새로고침되는데, 그거 막는 거예요
+            e.preventDefault(); // 원래 폼 제출하면 새로고침되는데, 그거 막는 거.
 
-            const emotionKey = diaryEmotion.value;      // "happy" 같은 값
-            const info = emotionData[emotionKey];       // 그 값에 맞는 라벨/아이콘 꺼내기
+            // 체크된 라디오 버튼의 value를 읽어옴
+            const emotionKey = document.querySelector('input[name="diaryEmotionRadio"]:checked').value;
 
             const today = new Date();
             const dateText = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, "0")}.${String(today.getDate()).padStart(2, "0")}`;
 
-            // 새 카드를 통째로 만들어서
-            const card = document.createElement("div");
-            card.className = "card";
-            card.dataset.content = diaryContent.value; // 상세보기에서 쓸 전체 내용 저장
-            card.innerHTML = `
-    <div class="card-thumb ${emotionKey}">
-      <img src="./이미지모음/${info.icon}" alt="${info.label} 이모티콘" class="card-emoji" />
-      <button type="button" class="card-close"><img src="./이미지모음/close.png" width="25px" height="25px" alt="삭제" /></button>
-    </div>
-    <div class="card-meta">
-      <span class="card-emotion ${emotionKey}">${info.label}</span>
-      <span class="card-date">${dateText}</span>
-    </div>
-    <p class="card-desc">${diaryContent.value}</p>
-  `;
+            // 새 일기 데이터를 만들어서 배열 맨 앞에 추가
+            const 새일기 = {
+                id: Date.now(),           // 지금 시각(밀리초)을 고유 번호로 사용
+                emotion: emotionKey,
+                title: diaryTitle.value,
+                date: dateText,
+                content: diaryContent.value,
+                comments: [],
+            };
 
-            cardList.prepend(card);   // 그리드 맨 앞에 새 카드로 끼워넣기
-            카드이벤트연결(card);      // 새 카드에도 상세보기/삭제 이벤트 연결
+            일기목록.unshift(새일기);
+            일기목록저장();
+            카드목록그리기();           // 배열이 바뀌었으니 카드 다시 그리기 (페이지 계산까지 포함)
 
             closeModal();
             successOverlay.style.display = "flex"; // 등록완료 중첩 모달 띄우기
-            카드페이지표시(); // 카드가 하나 늘었으니 페이지 다시 나누기
-            페이지버튼그리기();
         });
 
         /* ============================================================
@@ -1861,16 +1707,10 @@
             페이지버튼그리기();
         }
 
-        // 페이지가 다 로드된 다음에 첫 화면(1페이지) 그리기
-        window.addEventListener("load", function () {
-            카드페이지표시();
-            페이지버튼그리기();
-        });
+        // 여기까지 와야 시작페이지 같은 변수가 전부 준비돼요.
+        // 그래서 첫 화면 그리기는 스크립트 맨 마지막에 딱 한 번 호출해요.
+        카드목록그리기();
     </script>
-
-
-
-
 
 </body>
 
