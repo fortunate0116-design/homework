@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>지수의 다이어리 - 상세보기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poor+Story&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            outline: none;
+            font-family: "Poor Story", system-ui;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        /* ===== 상단 바 (메인 페이지랑 톤을 맞춤) ===== */
+        .top-bar {
+            width: 100%;
+            max-width: 1168px;
+            min-width: 320px;
+            margin: 0 auto;
+            height: 90px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 30px;
+            color: #494949;
+            cursor: pointer;
+        }
+
+        .darkmode {
+            display: flex;
+            gap: 8px;
+            flex-direction: row;
+            align-items: center;
+            font-size: 30px;
+        }
+
+        .darkModeToggle {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 58px;
+            height: 32px;
+            border-radius: 100px;
+            background-color: #E4E4E4;
+            border: none;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .darkModeToggle::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: #FFFFFF;
+            transition: left 0.2s;
+        }
+
+        .darkModeToggle:checked {
+            background-color: #000000;
+        }
+
+        .darkModeToggle:checked::after {
+            left: 29px;
+        }
+
+        /* ===== 상세 내용 영역 ===== */
+        .detail-wrap {
+            max-width: 700px;
+            min-width: 320px;
+            margin: 40px auto 80px auto;
+            padding: 0 20px;
+        }
+
+        .detail-page-title {
+            margin: 0 0 12px 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #222222;
+        }
+
+        .detail-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #111111;
+        }
+
+        .card-emotion.happy { color: #D4A017; }
+        .card-emotion.sadness { color: #23a0d6; }
+        .card-emotion.angry { color: #E0685C; }
+        .card-emotion.proud { color: #008848; }
+        .card-emotion.bored { color: #a718b4ce; }
+
+        .card-emotion {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .card-date {
+            color: #4e4e4e;
+            font-size: 1rem;
+        }
+
+        .detail-content-title {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #494949;
+        }
+
+        .detail-content {
+            min-height: 8rem;
+            line-height: 1.7;
+            font-size: 1.125rem;
+            color: #494949;
+            white-space: pre-wrap;
+        }
+
+        .detail-actions {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .detail-actions button {
+            height: 40px;
+            padding: 0 16px;
+            border: 1px solid #DDDDDD;
+            border-radius: 8px;
+            background-color: #FFFFFF;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .comment-section {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #777777;
+        }
+
+        .comment-title {
+            margin-bottom: 18px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #494949;
+        }
+
+        .comment-input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .comment-input-row input {
+            flex: 1;
+            height: 48px;
+            padding: 0 16px;
+            border-radius: 8px;
+            border: 1px solid #DDDDDD;
+            font-size: 1rem;
+        }
+
+        .comment-input-row button {
+            width: 70px;
+            height: 48px;
+            border: none;
+            border-radius: 8px;
+            background-color: #000000;
+            color: #FFFFFF;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .comment-list {
+            margin-top: 16px;
+        }
+
+        .comment-item {
+            padding: 14px 0;
+            border-bottom: 1px solid #EEEEEE;
+            font-size: 1rem;
+            color: #494949;
+        }
+
+        .comment-empty {
+            padding: 50px 0;
+            text-align: center;
+            color: #AAAAAA;
+            font-size: 1rem;
+        }
+
+        /* ===== 맨 위로 가기 버튼 ===== */
+        .scroll-top-btn {
+            position: fixed;
+            right: 2rem;
+            bottom: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background-color: #000000;
+            color: #FFFFFF;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ===== 토스트 ===== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background-color: #000000;
+            color: #FFFFFF;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-size: 0.875rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s, transform 0.25s;
+            z-index: 300;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== 삭제 확인 모달 ===== */
+        .deleteconfirm-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 250;
+        }
+
+        .deleteconfirm-box {
+            width: 300px;
+            background-color: #FFFFFF;
+            border-radius: 16px;
+            padding: 28px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .deleteconfirm-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .deleteconfirm-buttons button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #E4E4E4;
+            background-color: #FFFFFF;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .deleteconfirm-buttons button.danger {
+            background-color: #E0685C;
+            color: #FFFFFF;
+            border: none;
+        }
+
+        /* ===== 전체 다크모드 ===== */
+        body.dark-mode {
+            background-color: #121212;
+            color: #EEEEEE;
+        }
+
+        body.dark-mode .logo,
+        body.dark-mode .detail-page-title,
+        body.dark-mode .detail-content-title,
+        body.dark-mode .detail-content,
+        body.dark-mode .comment-title,
+        body.dark-mode .comment-item {
+            color: #EEEEEE;
+        }
+
+        body.dark-mode .top-bar {
+            background-color: rgba(18, 18, 18, 0.75);
+        }
+
+        body.dark-mode .detail-page-header {
+            border-bottom-color: #EEEEEE;
+        }
+
+        body.dark-mode .detail-actions button,
+        body.dark-mode .comment-input-row input,
+        body.dark-mode .deleteconfirm-buttons button:not(.danger) {
+            background-color: #2A2A2A;
+            color: #EEEEEE;
+            border-color: #444444;
+        }
+
+        body.dark-mode .deleteconfirm-box {
+            background-color: #222222;
+            color: #EEEEEE;
+        }
+
+        /* ===== 반응형 ===== */
+        @media (max-width: 767px) {
+            .top-bar {
+                width: 100%;
+                padding: 0 19px;
+            }
+
+            .darkmode {
+                font-size: 1rem;
+            }
+
+            .detail-wrap {
+                padding: 0 19px;
+                margin-top: 24px;
+            }
+
+            .scroll-top-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <span class="logo" id="logoBtn">지수의 다이어리</span>
+        <div class="darkmode">
+            <label for="darkModeCheckbox">다크모드</label>
+            <input type="checkbox" id="darkModeCheckbox" class="darkModeToggle" />
+        </div>
+    </div>
+
+    <div class="detail-wrap">
+        <h1 class="detail-page-title" id="detailTitle"></h1>
+        <div class="detail-page-header">
+            <span class="card-emotion" id="detailEmotion"></span>
+            <span class="card-date" id="detailDate"></span>
+        </div>
+
+        <div class="detail-content-title">내용</div>
+        <p class="detail-content" id="detailContent"></p>
+
+        <div class="detail-actions">
+            <button type="button" id="detailCopyBtn">복사하기</button>
+            <button type="button" id="detailDeleteBtn">삭제하기</button>
+        </div>
+
+        <div class="comment-section" id="commentSection">
+            <div class="comment-title">댓글</div>
+            <form class="comment-input-row" id="commentForm">
+                <input type="text" id="commentInput" placeholder="댓글을 입력해 주세요." />
+                <button type="submit">등록</button>
+            </form>
+            <div class="comment-list" id="commentList"></div>
+        </div>
+    </div>
+
+    <!-- 삭제 확인 모달 -->
+    <div class="deleteconfirm-overlay" id="deleteConfirmOverlay">
+        <div class="deleteconfirm-box">
+            <p>이 일기를 삭제할까요?</p>
+            <div class="deleteconfirm-buttons">
+                <button type="button" id="deleteConfirmCancel">취소</button>
+                <button type="button" class="danger" id="deleteConfirmOk">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 토스트 알림 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 맨 위로 가기 버튼 -->
+    <button type="button" class="scroll-top-btn" id="scrollTopBtn">⌃</button>
+
+    <script>
+        /* ============================================================
+           0. 기본 요소 찾아두기 + 다크모드
+           ============================================================ */
+        const logoBtn = document.getElementById("logoBtn");
+        const darkModeCheckbox = document.getElementById("darkModeCheckbox");
+        const detailTitle = document.getElementById("detailTitle");
+        const detailEmotion = document.getElementById("detailEmotion");
+        const detailDate = document.getElementById("detailDate");
+        const detailContent = document.getElementById("detailContent");
+        const detailCopyBtn = document.getElementById("detailCopyBtn");
+        const detailDeleteBtn = document.getElementById("detailDeleteBtn");
+        const commentSection = document.getElementById("commentSection");
+        const commentList = document.getElementById("commentList");
+        const commentForm = document.getElementById("commentForm");
+        const commentInput = document.getElementById("commentInput");
+        const deleteConfirmOverlay = document.getElementById("deleteConfirmOverlay");
+        const deleteConfirmCancel = document.getElementById("deleteConfirmCancel");
+        const deleteConfirmOk = document.getElementById("deleteConfirmOk");
+        const toast = document.getElementById("toast");
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+        // 메인 페이지로 돌아가기 (파일명이 바뀌면 여기도 같이 바꿔주세요)
+        const 메인페이지주소 = "jsdiary.html";
+        logoBtn.addEventListener("click", function () {
+            location.href = 메인페이지주소;
+        });
+
+        darkModeCheckbox.addEventListener("change", function () {
+            document.body.classList.toggle("dark-mode", darkModeCheckbox.checked);
+        });
+
+        scrollTopBtn.addEventListener("click", function () {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        const emotionLabelData = {
+            happy: "기쁨",
+            sadness: "슬픔",
+            angry: "화남",
+            proud: "뿌듯",
+            bored: "따분",
+        };
+
+        /* ============================================================
+           1. localStorage에서 이 일기 데이터 찾아오기
+           ============================================================ */
+        const 저장키 = "감정일기목록";
+        let 일기목록 = [];
+        let 선택한일기 = null;
+
+        function 일기목록저장() {
+            localStorage.setItem(저장키, JSON.stringify(일기목록));
+        }
+
+        function 처음화면준비하기() {
+            const 주소값 = new URLSearchParams(location.search);
+            const 일기아이디 = 주소값.get("id");
+            const 저장된값 = localStorage.getItem(저장키);
+
+            if (!저장된값 || !일기아이디) {
+                alert("메인 페이지에서 일기를 먼저 확인해 주세요.");
+                location.href = 메인페이지주소;
+                return;
+            }
+
+            일기목록 = JSON.parse(저장된값);
+            선택한일기 = 일기목록.find(function (일기) {
+                return String(일기.id) === String(일기아이디);
+            });
+
+            if (!선택한일기) {
+                alert("일기를 찾을 수 없어요.");
+                location.href = 메인페이지주소;
+                return;
+            }
+
+            if (!선택한일기.comments) 선택한일기.comments = [];
+
+            상세내용그리기();
+            댓글목록그리기();
+        }
+
+        function 상세내용그리기() {
+            detailTitle.textContent = 선택한일기.title || "";
+            detailEmotion.textContent = emotionLabelData[선택한일기.emotion];
+            detailEmotion.className = "card-emotion " + 선택한일기.emotion;
+            detailDate.textContent = 선택한일기.date;
+            detailContent.textContent = 선택한일기.content;
+        }
+
+        /* ============================================================
+           2. 댓글
+           ============================================================ */
+        function 댓글목록그리기() {
+            if (선택한일기.comments.length === 0) {
+                commentList.innerHTML = '<div class="comment-empty">등록된 댓글이 없습니다.</div>';
+                return;
+            }
+
+            commentList.innerHTML = 선택한일기.comments.map(function (댓글) {
+                return `<div class="comment-item">${댓글}</div>`;
+            }).join("");
+        }
+
+        commentForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            if (commentInput.value.trim() === "") return;
+
+            선택한일기.comments.push(commentInput.value.trim());
+            일기목록저장(); // 댓글도 localStorage에 같이 저장
+            댓글목록그리기();
+            commentInput.value = "";
+        });
+
+        /* ============================================================
+           3. 복사 / 삭제
+           ============================================================ */
+        let 토스트타이머 = null;
+        function 토스트보이기(message) {
+            toast.textContent = message;
+            toast.classList.add("show");
+            clearTimeout(토스트타이머);
+            토스트타이머 = setTimeout(function () {
+                toast.classList.remove("show");
+            }, 2000);
+        }
+
+        detailCopyBtn.addEventListener("click", function () {
+            navigator.clipboard.writeText(detailContent.textContent).then(function () {
+                토스트보이기("클립보드에 복사되었습니다.");
+            });
+        });
+
+        detailDeleteBtn.addEventListener("click", function () {
+            window.scrollTo({ top: 0 });
+            deleteConfirmOverlay.style.display = "flex";
+            document.body.style.overflow = "hidden";
+        });
+
+        deleteConfirmCancel.addEventListener("click", function () {
+            deleteConfirmOverlay.style.display = "none";
+            document.body.style.overflow = "";
+        });
+
+        deleteConfirmOk.addEventListener("click", function () {
+            일기목록 = 일기목록.filter(function (일기) {
+                return 일기.id !== 선택한일기.id;
+            });
+            일기목록저장();
+            location.href = 메인페이지주소; // 삭제하고 메인으로 돌아가기
+        });
+
+        // ESC로 삭제 확인 모달 닫기
+        window.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && deleteConfirmOverlay.style.display === "flex") {
+                deleteConfirmOverlay.style.display = "none";
+                document.body.style.overflow = "";
+            }
+        });
+
+        처음화면준비하기();
+    </script>
+</body>
+
+</html>

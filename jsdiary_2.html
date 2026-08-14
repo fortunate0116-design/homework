@@ -117,7 +117,7 @@
 
         /* :checked → 체크(켜짐) 상태일 때의 모양 */
         .darkModeToggle:checked {
-            background-color: #079e34;
+            background-color: #000000;
         }
 
         .darkModeToggle:checked::after {
@@ -129,6 +129,9 @@
             width: 1168px;
             height: 340px;
             border-radius: 24px;
+            /* max-width: 1168px;
+                    min-width: 320px; */
+            /* background-image: none; */
             background-color: #D9D9D9;
             max-width: 1168px;
             min-width: 320px;
@@ -158,28 +161,24 @@
             align-items: center;
         }
 
-        .diarybin {
-            width: 119px;
-            border-bottom: 3px solid black;
+        .tab-item {
+            width: auto;
+            min-width: 100px;
             padding: 12px 8px 12px 8px;
             gap: 10px;
-
+            text-align: center;
             font-weight: 700;
             font-size: 22px;
             line-height: 22px;
             letter-spacing: -1%;
-            /* -1% × 18px(font-size) = -0.18px ≈ -0.01em */
-            color: #000000;
+            color: #818181;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
         }
 
-        .photobin {
-            width: 119px;
-            padding: 12px 8px 12px 8px;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 22px;
-            line-height: 22px;
-            color: #818181;
+        .tab-item.active {
+            color: #000000;
+            border-bottom: 3px solid black;
         }
 
         .search {
@@ -228,12 +227,14 @@
             background-color: rgb(2, 2, 2);
             color: white;
             font-size: 18px;
-            cursor: pointer;
         }
 
         .cardlist {
             display: grid;
+
             justify-content: center;
+            /* width: 1168px;
+                    height: 936px; */
 
             grid-template-columns: 274px 274px 274px 274px;
             grid-template-rows: 296px 296px 296px;
@@ -319,18 +320,16 @@
         .modal-overlay {
             position: fixed;
             /* 스크롤 상관없이 화면 기준 고정 */
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            /* 다른 요소들보다 위에 뜨도록 */
-            
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            /* 다른 요소들보다 위에 뜨도록 */
         }
 
         .modal {
@@ -512,14 +511,13 @@
         .filter {
             border: 1px solid #E4E4E4;
             border-radius: 8px;
-            background-color: #ffffff;
+            background-color: #FFFFFF;
             cursor: pointer;
         }
 
         /* ===== 카드 이미지 object-fit ===== */
         .card-emoji {
             object-fit: cover;
-            border-radius: 24px;
         }
 
         .card,
@@ -546,29 +544,16 @@
             justify-content: center;
         }
 
-        /* ===== 탭 클릭 가능하게 ===== */
-        .diarybin,
-        .photobin {
-            cursor: pointer;
+        /* ===== 일기목록 / 사진목록 / 포춘쿠키 패널 전환 ===== */
+        /* 세 패널 다 기본은 숨김, .active 붙은 것만 보이게 (탭 늘어나도 이 방식 그대로 씀) */
+        .tab-panel {
+            display: none;
         }
 
-        /* ===== 일기목록 / 사진목록 패널 전환 ===== */
-        .list-panel {
+        .tab-panel.active {
             display: flex;
             flex-direction: column;
             gap: 32px;
-        }
-
-        .list-panel.hidden {
-            display: none;
-        }
-
-        .photo-panel {
-            display: none;
-        }
-
-        .photo-panel.active {
-            display: block;
         }
 
         .photo-toolbar {
@@ -635,6 +620,75 @@
             100% {
                 background-position: -200% 0;
             }
+        }
+
+        /* ===== 포춘쿠키 탭 ===== */
+        .fortune-wrap {
+            max-width: 480px;
+            margin: 40px auto;
+            padding: 48px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+        }
+
+        .fortune-cookie {
+            font-size: 96px;
+            line-height: 1;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.15s;
+        }
+
+        .fortune-cookie:hover {
+            transform: scale(1.08) rotate(-4deg);
+        }
+
+        .fortune-cookie.cracked {
+            animation: fortune-crack 0.35s ease;
+        }
+
+        @keyframes fortune-crack {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+
+            30% {
+                transform: scale(1.25) rotate(-8deg);
+            }
+
+            60% {
+                transform: scale(0.95) rotate(6deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .fortune-hint {
+            color: #919191;
+            font-size: 16px;
+        }
+
+        .fortune-text {
+            min-height: 28px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #494949;
+        }
+
+        .fortune-btn {
+            margin-top: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 100px;
+            background-color: #000000;
+            color: #FFFFFF;
+            font-size: 16px;
+            cursor: pointer;
         }
 
         .modal-darkswitch {
@@ -902,13 +956,13 @@
             background-color: #2A2A2A;
         }
 
-        body.dark-mode .diarybin {
-            color: #FFFFFF;
-            border-bottom-color: #FFFFFF;
+        body.dark-mode .tab-item {
+            color: #888888;
         }
 
-        body.dark-mode .photobin {
-            color: #888888;
+        body.dark-mode .tab-item.active {
+            color: #FFFFFF;
+            border-bottom-color: #FFFFFF;
         }
 
         body.dark-mode .search {
@@ -941,6 +995,19 @@
 
         body.dark-mode .card-date {
             color: #999999;
+        }
+
+        body.dark-mode .fortune-hint {
+            color: #999999;
+        }
+
+        body.dark-mode .fortune-text {
+            color: #EEEEEE;
+        }
+
+        body.dark-mode .fortune-btn {
+            background-color: #333333;
+            color: #EEEEEE;
         }
 
         body.dark-mode .footer {
@@ -1080,11 +1147,6 @@
 
 </head>
 
-
-
-
-
-
 <body>
     
     <div class="top">
@@ -1111,12 +1173,13 @@
             <!-- 메인영역 안에는 탭 메뉴, 검색, 카드목록, 페이지번호 등이 들어감 -->
             <div class="maintop">
                 <div class="bin">
-                    <span class="diarybin">일기보관함</span>
-                    <span class="photobin">사진보관함</span>
+                    <span class="tab-item active" data-panel="listPanel">일기보관함</span>
+                    <span class="tab-item" data-panel="photoPanel">사진보관함</span>
+                    <span class="tab-item" data-panel="fortunePanel">포춘쿠키</span>
 
                 </div>
 
-                <div class="list-panel" id="listPanel">
+                <div class="tab-panel active" id="listPanel">
                     <div class="search">
                         <div class="toolbar">
 
@@ -1136,7 +1199,7 @@
                     <div class="cardlist"></div>
                 </div>
 
-                <div class="photo-panel" id="photoPanel">
+                <div class="tab-panel" id="photoPanel">
                     <div class="photo-toolbar">
                         <select class="ratio-select" id="ratioSelect">
                             <option value="기본형">기본형 1:1</option>
@@ -1145,6 +1208,15 @@
                         </select>
                     </div>
                     <div class="dogGrid 기본형" id="dogGrid"></div>
+                </div>
+
+                <div class="tab-panel" id="fortunePanel">
+                    <div class="fortune-wrap">
+                        <div class="fortune-cookie" id="fortuneCookie">🥠</div>
+                        <p class="fortune-hint" id="fortuneHint">쿠키를 눌러서 오늘의 운세를 확인해 보세요.</p>
+                        <p class="fortune-text" id="fortuneText"></p>
+                        <button type="button" class="fortune-btn" id="fortuneBtn">쿠키 열기</button>
+                    </div>
                 </div>
 
             </div>
@@ -1233,13 +1305,6 @@
     <!-- 맨 위로 가기 버튼 -->
     <button type="button" class="scroll-top-btn" id="scrollTopBtn">⌃</button>
 
-
-
-
-
-
-
-
     <script>
         /* ============================================================
            0. 유틸 함수 (디바운스 / 쓰로틀)
@@ -1300,19 +1365,16 @@
         const scrollTopBtn = document.getElementById("scrollTopBtn");
         const homeTitleBtn = document.getElementById("homeTitleBtn");
 
-        // 제목 누르면 메인 화면으로
+        // 제목 누르면 메인 화면으로 (지금 이미 메인이라, 눌러도 그대로지만 다른 페이지에서 오는 것과 동작을 통일해요)
         homeTitleBtn.addEventListener("click", function () {
             location.href = "jsdiary.html";
         });
 
-        const diaryTab = document.querySelector(".diarybin");
-        const photoTab = document.querySelector(".photobin");
-        const listPanel = document.getElementById("listPanel");
         const photoPanel = document.getElementById("photoPanel");
         const ratioSelect = document.getElementById("ratioSelect");
         const dogGrid = document.getElementById("dogGrid");
 
-        // 감정 종류별로 라벨/아이콘 파일명을 미리 묶어둠
+        // 감정 종류별로 라벨/아이콘 파일명을 미리 묶어둔 사전(딕셔너리)
         const emotionData = {
             happy: { label: "기쁨", icon: "happy.png" },
             sadness: { label: "슬픔", icon: "sadness.png" },
@@ -1324,12 +1386,11 @@
         /* ============================================================
            1.5. 일기 데이터 (localStorage에 저장 → 상세페이지랑 데이터를 공유)
            ============================================================ */
-        const 저장키 = "감정일기목록";
+        const 저장키 = "감정일기목록"; // ← 여러 함수가 같이 써야 해서 함수 밖(전역)으로 뺐어요
 
         function 일기목록불러오기() {
             const 저장된값 = localStorage.getItem(저장키);
-
-            // 처음 실행할 때만 기본 12개로 초기값을 채움
+            // 처음 실행할 때만 기본 12개로 초기값을 채워둬요
             const 기본데이터 = [
                 { id: 1, emotion: "proud", title: "일찍 일어난 아침", date: "2026.08.03", content: "아침에 일어나기 힘들었지만 잘 일어남~!", comments: [] },
                 { id: 2, emotion: "sadness", title: "너무 더운 날씨", date: "2026.08.04", content: "날씨가 너무 더워서 슬프다.", comments: [] },
@@ -1353,6 +1414,8 @@
                 
                 return JSON.parse(저장된값);
             }
+            
+            
         }
 
         let 일기목록 = 일기목록불러오기();
@@ -1478,7 +1541,7 @@
         }
 
         /* ============================================================
-           6. 일기 등록 모달 (열기/닫기/ESC/여백클릭/등록완료)
+           6. 일기 등록 모달 (열기/닫기/ESC/여백클릭/다크토글/등록완료)
            ============================================================ */
         function openModal() {
             window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1497,12 +1560,12 @@
         modalCloseBtn.addEventListener("click", closeModal);
         modalCancelBtn.addEventListener("click", closeModal);
 
-        // 모달 옆 여백(오버레이 자체) 클릭시 닫기
+        // 모달 여백(오버레이 자체) 클릭시 닫기
         diaryModal.addEventListener("click", function (e) {
             if (e.target === diaryModal) closeModal();
         });
 
-        // ESC 키로 열려있는 모달 닫기
+        // ESC 키로 열려있는 모달들 닫기
         window.addEventListener("keydown", function (e) {
             if (e.key !== "Escape") return;
             if (diaryModal.style.display === "flex") closeModal();
@@ -1523,9 +1586,9 @@
 
         // 폼 제출(등록 버튼 클릭) 시 실행
         diaryForm.addEventListener("submit", function (e) {
-            e.preventDefault(); // 원래 폼 제출하면 새로고침되는데, 그거 막는 거.
+            e.preventDefault(); // 원래 폼 제출하면 새로고침되는데, 그거 막는 거예요
 
-            // 체크된 라디오 버튼의 value를 읽어옴
+            // 체크된 라디오 버튼의 value를 읽어와요
             const emotionKey = document.querySelector('input[name="diaryEmotionRadio"]:checked').value;
 
             const today = new Date();
@@ -1550,25 +1613,76 @@
         });
 
         /* ============================================================
-           7. 탭 전환 (일기보관함 ↔ 사진보관함)
+           7. 탭 전환 (일기보관함 / 사진보관함 / 포춘쿠키) — 몇 개로 늘어나도 이 코드 그대로 써요
            ============================================================ */
-        diaryTab.addEventListener("click", function () {
-            listPanel.classList.remove("hidden");
-            photoPanel.classList.remove("active");
-            diaryTab.className = "diarybin";
-            photoTab.className = "photobin";
+        const tabItems = document.querySelectorAll(".tab-item");
+
+        tabItems.forEach(function (tab) {
+            tab.addEventListener("click", function () {
+                // 일단 전부 다 비활성/숨김으로 초기화하고
+                tabItems.forEach(function (t) { t.classList.remove("active"); });
+                document.querySelectorAll(".tab-panel").forEach(function (panel) {
+                    panel.classList.remove("active");
+                });
+
+                // 클릭한 탭이랑, 거기에 적어둔 data-panel 아이디를 가진 패널만 다시 켜기
+                tab.classList.add("active");
+                document.getElementById(tab.dataset.panel).classList.add("active");
+
+                // 사진탭을 "처음" 열 때만 강아지 사진을 불러옴
+                if (tab.dataset.panel === "photoPanel" && 강아지사진불러왔는지 === false) {
+                    강아지사진불러오기();
+                }
+            });
         });
 
-        photoTab.addEventListener("click", function () {
-            listPanel.classList.add("hidden");
-            photoPanel.classList.add("active");
-            photoTab.className = "diarybin";  // 활성 탭 스타일 재사용
-            diaryTab.className = "photobin";  // 비활성 탭 스타일 재사용
+        /* ============================================================
+           7.5. 포춘쿠키 — 배열에서 무작위로 하나 뽑아 보여주는 패턴
+           ============================================================ */
+        const 포춘목록 = [
+            "오늘 하루도 잘 버텨낸 나에게 박수를 보내주세요. 👏",
+            "생각보다 좋은 일이 곧 찾아올 거예요.",
+            "지금 이 순간의 감정도 다 의미가 있어요.",
+            "가끔은 아무것도 안 해도 괜찮아요.",
+            "작은 일에도 웃을 수 있는 오늘이 되길 바라요.",
+            "당신의 노력은 반드시 누군가 알아보고 있어요.",
+            "오늘 못한 일은 내일 해도 늦지 않아요.",
+            "당신 곁에는 생각보다 좋은 사람이 많아요.",
+            "지치면 잠깐 멈춰도 괜찮아요, 그것도 용기예요.",
+            "오늘의 나를 어제의 나보다 조금 더 아껴주세요.",
+            "예상 못한 좋은 소식이 곧 들려올 거예요.",
+            "당신의 하루는 생각보다 잘 흘러가고 있어요.",
+        ];
 
-            if (강아지사진불러왔는지 === false) {
-                강아지사진불러오기();
+        let 직전포춘 = ""; // 방금 나온 문장을 기억해뒀다가, 같은 게 두 번 연달아 안 나오게 함
+
+        const fortuneCookie = document.getElementById("fortuneCookie");
+        const fortuneBtn = document.getElementById("fortuneBtn");
+        const fortuneText = document.getElementById("fortuneText");
+        const fortuneHint = document.getElementById("fortuneHint");
+
+        function 포춘열기() {
+            // 배열에서 무작위로 하나 뽑기
+            let 뽑은포춘 = 포춘목록[Math.floor(Math.random() * 포춘목록.length)];
+
+            // 방금 나온 것과 같으면, 다를 때까지 다시 뽑기
+            while (뽑은포춘 === 직전포춘 && 포춘목록.length > 1) {
+                뽑은포춘 = 포춘목록[Math.floor(Math.random() * 포춘목록.length)];
             }
-        });
+            직전포춘 = 뽑은포춘;
+
+            fortuneText.textContent = 뽑은포춘;
+            fortuneHint.textContent = "쿠키를 다시 누르면 새로운 운세가 나와요.";
+
+            // 쿠키 흔들리는 애니메이션을 처음부터 다시 재생시키는 방법:
+            // 클래스를 뺐다가(remove) 강제로 리플로우 한 번 일으키고(offsetWidth) 다시 붙이면(add) 재생돼요
+            fortuneCookie.classList.remove("cracked");
+            void fortuneCookie.offsetWidth;
+            fortuneCookie.classList.add("cracked");
+        }
+
+        fortuneCookie.addEventListener("click", 포춘열기);
+        fortuneBtn.addEventListener("click", 포춘열기);
 
         /* ============================================================
            8. 사진보관함: fetch API + object-fit + 비율필터 + 무한스크롤
@@ -1712,6 +1826,10 @@
         // 그래서 첫 화면 그리기는 스크립트 맨 마지막에 딱 한 번 호출해요.
         카드목록그리기();
     </script>
+
+
+
+
 
 </body>
 
